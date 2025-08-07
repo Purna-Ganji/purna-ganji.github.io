@@ -1,0 +1,286 @@
+/* Enhanced Contact Section */
+.contact-flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
+}
+.contact {
+    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+    color: #ffffff;
+    padding: 50px 20px;
+    border-top: 1px solid var(--accent-color);
+    border-bottom: 1px solid var(--accent-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+}
+.contactbox{
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    max-width: 900px;
+    width: 100%;
+    padding: 60px;
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+    transition: box-shadow 0.4s ease-in-out, transform 0.3s ease;
+}
+
+.contactbox:hover ,.grid-box:hover {
+    box-shadow:
+        0 0 8px var(--accent-color),
+        0 0 16px var(--accent-color),
+        0 0 24px rgba(0, 255, 255, 0.4),
+        inset 0 0 12px rgba(0, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.contact .contact-wrapper {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    max-width: 700px;
+    width: 100%;
+    padding: 40px;
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+    transition: box-shadow 0.4s ease-in-out;
+}
+
+.contact .contact-wrapper:hover {
+        box-shadow: 
+        0 0 8px var(--accent-color),
+        0 0 16px var(--accent-color),
+        0 0 24px rgba(0, 255, 255, 0.4),
+        inset 0 0 8px rgba(0, 255, 255, 0.2);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.contact h2 {
+    color: var(--accent-color);
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.contact p {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #ccc;
+    margin-bottom: 40px;
+}
+
+.glass-contact-box {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
+}
+
+.glass-contact-box:hover ,.grid-box:hover{
+    box-shadow:
+        0 0 8px var(--accent-color),
+        0 0 16px var(--accent-color),
+        0 0 24px rgba(0, 255, 255, 0.4),
+        inset 0 0 12px rgba(0, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.contact-info {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.contact-info li {
+    margin: 15px 0;
+    font-size: 1rem;
+    color: #f0f0f0;
+}
+
+.contact-info a {
+    color: var(--accent-color);
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px dotted var(--accent-color);
+}
+
+.contact-info a:hover {
+    color: var(--highlight);
+    border-bottom: 1px solid var(--highlight);
+}
+
+/* Footer */
+footer {
+    background: #0a0f24;
+    color: #888;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 0.9rem;
+    transition: box-shadow 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+footer:hover {
+    box-shadow: 
+        0 0 10px var(--accent-color),
+        0 0 20px rgba(0, 255, 255, 0.4),
+        inset 0 0 10px rgba(0, 255, 255, 0.2);
+    color: var(--highlight);
+}
+
+.project-button {
+  align-self: center;
+  background: white;
+  padding: 0.6em 1.5em;
+  border-radius: 2em;
+  font-weight: 500;
+  color: black;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-family: "Inter", sans-serif;
+}
+
+.project-button:hover {
+  background: #ff0000;
+  color: #000;
+  box-shadow: 0 0 10px #00ffff;
+}
+.honeycomb-cell__desc {
+  font-size: 1em;
+  color: #111;
+  line-height: 1.4;
+  margin-bottom: auto; /* pushes button to bottom */
+  padding: 0.5em 0;
+  text-align: center;
+}
+/* Image section */
+.project-image-wrapper {
+  height: 300px;
+  margin-bottom: 1rem;
+}
+.project-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Title section */
+.project-title-wrapper {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+.project-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin: 0;
+}
+
+/* Description section */
+.project-desc-wrapper {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.project-description {
+  color: #d1d1d1;
+  font-size: 1rem;
+  line-height: 1.4;
+  text-align: center;
+  margin: 0;
+}
+.reference-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px; /* Space between image and details */
+}
+
+.reference-photo img {
+  width: 210px; /* Fixed image size */
+  height: 210px;
+  object-fit: cover;
+  border-radius: 8px; /* Slight rounded corners */
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.4); /* Tron blue glow */
+}
+
+.reference-details {
+  flex: 1; /* Takes remaining width */
+  display: grid;
+   grid-template-columns: 110px 1fr; /* Label column and value column */
+  gap: 9px 1px; /* Row gap and column gap */
+  align-items: start;
+}
+
+.reference-header {
+  grid-column: 1 / -1; /* Make the name span across both columns */
+  text-align: center; /* Center name */
+  margin-bottom: 10px;
+}
+.reference-details .label {
+  font-weight: bold;
+  color: #ffffff;
+  white-space: nowrap; /* Prevent label wrapping */
+  text-align: left; /* Align labels to the right for tighter look */
+}
+.reference-details .value {
+  color: #b8ffff;
+  text-align: left;
+  padding-left: 9px;
+}
+
+.reference-details .value a {
+  color: #00ffff;
+  text-decoration: none;
+  text-align: left;
+}
+
+.reference-details .value a:hover {
+  text-decoration: underline;
+}
+.reference-name {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #00ffff; /* Tron blue */
+}
+
+.reference-department {
+  margin: 4px 0;
+  font-size: 1rem;
+  color: #b8ffff;
+}
+
+.reference-relationship {
+  margin: 6px 0;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.reference-contact {
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+}
+
+.reference-contact a {
+  color: #00ffff;
+  text-decoration: none;
+}
+
+.reference-contact a:hover {
+  text-decoration: underline;
+}

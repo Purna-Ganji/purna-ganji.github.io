@@ -1,0 +1,963 @@
+:root {
+  /* Change this to change the appearance of the hexaons */
+  --hex-width: 118px; 
+  --hex-between: 10px;
+  
+  /* Other hexagon dimentions */
+  --hex-height: calc(var(--hex-width) / 1.69 /* sqrt(3) */);
+  --hex-margin: calc(var(--hex-width) / 2);
+  --hex-border: calc(var(--hex-margin) / 1.73 /* sqrt(3) */);
+  
+  --hex-transition: all .2s ease;
+  
+  /* Colors */
+  --color-arcgis:      #2C7AC3;
+  --color-envi:        #007B85;
+  --color-hex-default: #000000;
+  --color-hex-hover:   #FFFFFF;
+  --color-hex-glow: #00ffff; /* Tron blue */
+  --color-angular:     #DD0031;
+  --color-atom:        #66595C;
+  --color-bootstrap:   #563D7C;
+  --color-circleci:    #343434;
+  --color-css:         #1572B6;
+  --color-sql:         #336791;
+  --color-mysql:       #4479A1;
+  --color-git:         #F14E32;
+  --color-gulp:        #DA4648;
+  --color-haskell:     #5D4F85;
+  --color-html:        #E34F26;
+  --color-javascript:  #F7DF1E;
+  --color-java:        #007396;
+  --color-meteor:      #DE4F4F;
+  --color-python:      #3776AB;
+  --color-rails:       #CC0000;
+  --color-sass:        #CC6699;
+  --color-vuejs:       #4FC08D;
+  --color-webpack:     #8DD6F9;
+  --color-active-directory: #003366;
+  --color-service-now:      #00b0a1;
+  --color-mulesoft:         #0a6b9c;
+  --color-google-workspace: #4285F4;
+  --color-google-earth:     #3b9cdd62;
+  --color-adobe:            #ff000037;
+  --color-zoom:             #0B5CFF;
+  --color-gmail:       #EA4335;
+  --color-calendar:    #4285F4;
+  --color-colab:       #F9AB00;
+  --color-gcloud:      #4286f467;
+  --color-drive:       #4285F4;
+  --color-docs:        #4285F4;
+  --color-gemini:      #8e75b29d;
+  --color-chrome:      #4286f441;
+  --color-forms:       #7148b971;
+  --color-photos:      #4286f488;
+  --color-sheets:      #34a85386;
+  --color-scholar:     #4286f482;
+  --color-jupyter:     #fa600156;
+  --color-vscode:      #0c80ce54;
+  --color-flask:       #d1cbcb69;
+  --color-copilot: #2525b0;
+  --color-powerpoint: #b7462aa2;
+  --color-word: #185abd;
+  --color-excel: #21734681;
+  --color-outlook: #0072C6;
+  --color-onedrive: #094AB2;
+  --color-teams: #6264a7;
+  --color-vpn: #008273;
+  --color-sharepoint: #0078d483;
+  --color-windows: #00abef96;
+  --color-edge: #0076d789;
+  --color-brave: #fb552bfc;
+  --color-linux: #fcc624;
+  --color-remote-desktop: #0072C6;     /* Windows RDP Blue */
+  --color-teamdynamix: #0082C9;        /* TeamDynamix blue */
+  --color-pytorch: #EE4C2C;
+  --color-arcpy: #1E4D2B; /* Dark green tone for ArcPy */
+  --color-chatgpt: #10a37f;
+  --color-deepseek: #522ab9b9;
+    --color-github:     #18171731;
+  --color-instagram:  #ff006a8c;
+  --color-facebook:   #0866FF;
+  --color-linkedin:   #0076b580;
+  --color-whatsapp:   #25D366;
+
+}
+
+/* Hexagons */
+.hexagon-container {
+  display: grid;
+  grid-template-columns: var(--hex-width) var(--hex-width) var(--hex-width) var(--hex-width);
+  grid-auto-rows: calc(var(--hex-width) - 28.87px/2);
+  grid-gap: var(--hex-between) var(--hex-between);
+  padding-bottom: var(--hex-border);
+}
+.hexagon {
+  align-items: center;
+  background-color: var(--color-hex-default);
+  cursor: pointer;
+  display: flex;
+  fill: white;
+  height: var(--hex-height);
+  justify-content: center;
+  margin: var(--hex-border) 0;
+  position: relative;
+  transition: var(--hex-transition);
+  width: var(--hex-width);
+  
+}
+
+.hex-label {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 110%; /* pushes it to the right side */
+  transform: translateY(-50%);
+  background: rgba(3, 255, 255, 0.932);
+  color: #ff003c;;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  font-size: 0.95rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hexagon:hover .hex-label {
+  display: block;
+}
+
+.hexagon::after,
+.hexagon::before {
+  border-left: var(--hex-margin) solid transparent;
+  border-right: var(--hex-margin) solid transparent;
+  content: "";
+  left: 0;
+  position: absolute;
+  transition: var(--hex-transition);
+  width: 0;
+}
+.hexagon::after {
+  border-top: var(--hex-border) solid var(--color-hex-default);
+  top: 100%;
+  width: 0;
+}
+.hexagon::before {
+  border-bottom: var(--hex-border) solid var(--color-hex-default);
+  bottom: 100%;
+}
+  
+.hexagon:hover {
+  background-color: var(--color-hex-hover);
+}
+.hexagon:hover::after,
+.hexagon:hover::before {
+  border-top-color: var(--color-hex-hover);
+  border-bottom-color: var(--color-hex-hover);
+  }
+ 
+.hexagon:nth-child(8n + 5),
+.hexagon:nth-child(8n + 6),
+.hexagon:nth-child(8n + 7),
+.hexagon:nth-child(8n + 8) {
+  margin-left: calc(var(--hex-width) / 2 + var(--hex-between) / 2);
+}
+
+.hexagon > svg {
+  height: 75%;
+  transition: var(--hex-transition);
+}
+
+.hex-img {
+  width: 74px;
+  height: 74px;
+  object-fit: contain; /* This will "cover" the hexagon */
+  object-position: center;
+  position: relative;
+  display: block;
+  margin: 0 auto; 
+  z-index: 0;
+}
+.course-hexagon-container {
+  display: grid;
+  grid-template-columns: repeat(4, 110px); /* Matches hexagon width */
+  grid-auto-rows: 100px; /* Adjusted to move items upward slightly */
+  grid-gap: 5px 25px; /* Tighten horizontal gaps */
+  margin-top: -20px; /* Shift whole grid upward */
+  padding-bottom: 20px;
+  position: relative;
+}
+.course-hexagon {
+    width: 150px;
+    height: 124px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: polygon(
+    50% 0%,
+    93% 25%,
+    93% 75%,
+    50% 100%,
+    7% 75%,
+    7% 25%
+    );
+    --color-hex-default: #00ffff50;
+    background-color: #00eeff;
+    border: 2px solid rgba(0, 255, 255, 0.3); /* light Tron-blue border */
+    color: #ff0d00;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    font-family: 'Segoe UI', sans-serif;
+    backdrop-filter: blur(6px);
+    box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.1);
+    transition: border 0.3s ease, box-shadow 0.3s ease, color 0.3s
+}
+
+.course-hexagon-text {
+  --color-hex-default: #00ffff;
+    color: #ff0d00;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    font-family: 'Segoe UI', sans-serif;
+
+}
+
+.course-hexagon:hover {
+  border-color: #00ffff;
+  box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+  background: rgba(255, 225, 0, 0.473); /* brighter glass on hover */
+  color: white;
+  cursor: default;
+}
+
+/* Colors */
+.color-java {
+  background-color: var(--color-java);
+}
+.color-java::after,
+.color-java::before {
+  border-top-color: var(--color-java);
+  border-bottom-color: var(--color-java);
+}
+.color-java:hover {
+  fill: var(--color-java);
+}
+
+.color-arcgis {
+  background-color: var(--color-arcgis);
+}
+
+.color-arcgis::after,
+.color-arcgis::before {
+  border-top-color: var(--color-arcgis);
+  border-bottom-color: var(--color-arcgis);
+}
+
+.color-arcgis:hover {
+  fill: var(--color-arcgis);
+}
+
+
+.color-sql {
+  background-color: var(--color-sql);
+}
+.color-sql::after,
+.color-sql::before {
+  border-top-color: var(--color-sql);
+  border-bottom-color: var(--color-sql);
+}
+.color-sql:hover {
+  fill: var(--color-sql);
+}
+
+.color-mysql {
+  background-color: var(--color-mysql);
+}
+.color-mysql::after,
+.color-mysql::before {
+  border-top-color: var(--color-mysql);
+  border-bottom-color: var(--color-mysql);
+}
+.color-mysql:hover {
+  fill: var(--color-mysql);
+}
+
+.color-sass {
+  background-color: var(--color-sass);
+}
+.color-sass::after,
+.color-sass::before {
+  border-top-color: var(--color-sass);
+  border-bottom-color: var(--color-sass);
+}
+.color-sass:hover {
+  fill: var(--color-sass);
+}
+
+.color-angular {
+  background-color: var(--color-angular);
+}
+.color-angular::after,
+.color-angular::before {
+  border-top-color: var(--color-angular);
+  border-bottom-color: var(--color-angular);
+}
+.color-angular:hover {
+  fill: var(--color-angular);
+}
+
+.color-gulp {
+  background-color: var(--color-gulp);
+} 
+.color-gulp::after,
+.color-gulp::before {
+  border-top-color: var(--color-gulp);
+  border-bottom-color: var(--color-gulp);
+}
+.color-gulp:hover {
+  fill: var(--color-gulp);
+}
+
+.color-rails {
+  background-color: var(--color-rails);
+}
+.color-rails::after,
+.color-rails::before {
+  border-top-color: var(--color-rails);
+  border-bottom-color: var(--color-rails);
+}
+.color-rails:hover {
+  fill: var(--color-rails);
+}
+
+.color-git {
+  background-color: var(--color-git);
+}
+.color-git::after,
+.color-git::before {
+  border-top-color: var(--color-git);
+  border-bottom-color: var(--color-git);
+}
+.color-git:hover {
+  fill: var(--color-git);
+}
+
+.color-html {
+  background-color: var(--color-html);
+}
+.color-html::after,
+.color-html::before {
+  border-top-color: var(--color-html);
+  border-bottom-color: var(--color-html);
+}
+.color-html:hover {
+  fill: var(--color-html);
+}
+
+.color-javascript {
+  background-color: var(--color-javascript);
+}
+.color-javascript::after,
+.color-javascript::before {
+  border-top-color: var(--color-javascript);
+  border-bottom-color: var(--color-javascript);
+}
+.color-javascript:hover {
+  fill: var(--color-javascript);
+}
+
+.color-vuejs {
+  background-color: var(--color-vuejs);
+}
+.color-vuejs::after,
+.color-vuejs::before {
+  border-top-color: var(--color-vuejs);
+  border-bottom-color: var(--color-vuejs);
+}
+.color-vuejs:hover {
+  fill: var(--color-vuejs);
+}
+
+.color-circleci {
+  background-color: var(--color-circleci);
+}
+.color-circleci::after,
+.color-circleci::before {
+  border-top-color: var(--color-circleci);
+  border-bottom-color: var(--color-circleci);
+}
+.color-circleci:hover {
+  fill: var(--color-circleci);
+}
+
+.color-webpack {
+  background-color: var(--color-webpack);
+}
+.color-webpack::after,
+.color-webpack::before {
+  border-top-color: var(--color-webpack);
+  border-bottom-color: var(--color-webpack);
+}
+.color-webpack:hover {
+  fill: var(--color-webpack);
+}
+
+.color-css {
+  background-color: var(--color-css);
+}
+.color-css::after,
+.color-css::before {
+  border-top-color: var(--color-css);
+  border-bottom-color: var(--color-css);
+}
+.color-css:hover {
+  fill: var(--color-css);
+}
+
+.color-python {
+  background-color: var(--color-python);
+}
+.color-python::after,
+.color-python::before {
+  border-top-color: var(--color-python);
+  border-bottom-color: var(--color-python);
+}
+.color-python:hover {
+  fill: var(--color-python);
+}
+
+.color-haskell {
+  background-color: var(--color-haskell);
+}
+.color-haskell::after,
+.color-haskell::before {
+  border-top-color: var(--color-haskell);
+  border-bottom-color: var(--color-haskell);
+}
+.color-haskell:hover {
+  fill: var(--color-haskell);
+}
+
+.color-bootstrap {
+  background-color: var(--color-bootstrap);
+}
+.color-bootstrap::after,
+.color-bootstrap::before {
+  border-top-color: var(--color-bootstrap);
+  border-bottom-color: var(--color-bootstrap);
+}
+.color-bootstrap:hover {
+  fill: var(--color-bootstrap);
+}
+
+.color-atom {
+  background-color: var(--color-atom);
+}
+.color-atom::after,
+.color-atom::before {
+  border-top-color: var(--color-atom);
+  border-bottom-color: var(--color-atom);
+}
+.color-atom:hover {
+  fill: var(--color-atom);
+}
+
+.color-meteor {
+  background-color: var(--color-meteor);
+}
+.color-meteor::after,
+.color-meteor::before {
+  border-top-color: var(--color-meteor);
+  border-bottom-color: var(--color-meteor);
+}
+.color-meteor:hover {
+  fill: var(--color-meteor);
+}
+
+.color-arcgis-online {
+  background-color: var(--color-arcgis-online);
+}
+.color-arcgis-online::after,
+.color-arcgis-online::before {
+  border-top-color: var(--color-arcgis-online);
+  border-bottom-color: var(--color-arcgis-online);
+}
+.color-arcgis-online:hover {
+  fill: var(--color-arcgis-online);
+}
+
+.color-envi {
+  background-color: var(--color-envi);
+}
+.color-envi::after,
+.color-envi::before {
+  border-top-color: var(--color-envi);
+  border-bottom-color: var(--color-envi);
+}
+.color-envi:hover {
+  fill: var(--color-envi);
+}
+
+.color-active-directory {
+  background-color: var(--color-active-directory);
+}
+.color-active-directory::after,
+.color-active-directory::before {
+  border-top-color: var(--color-active-directory);
+  border-bottom-color: var(--color-active-directory);
+}
+.color-active-directory:hover {
+  fill: var(--color-active-directory);
+}
+
+.color-service-now {
+  background-color: var(--color-service-now);
+}
+.color-service-now::after,
+.color-service-now::before {
+  border-top-color: var(--color-service-now);
+  border-bottom-color: var(--color-service-now);
+}
+.color-service-now:hover {
+  fill: var(--color-service-now);
+}
+
+.color-mulesoft {
+  background-color: var(--color-mulesoft);
+}
+.color-mulesoft::after,
+.color-mulesoft::before {
+  border-top-color: var(--color-mulesoft);
+  border-bottom-color: var(--color-mulesoft);
+}
+.color-mulesoft:hover {
+  fill: var(--color-mulesoft);
+}
+
+.color-google-workspace {
+  background-color: var(--color-google-workspace);
+}
+.color-google-workspace::after,
+.color-google-workspace::before {
+  border-top-color: var(--color-google-workspace);
+  border-bottom-color: var(--color-google-workspace);
+}
+.color-google-workspace:hover {
+  fill: var(--color-google-workspace);
+}
+
+.color-google-earth {
+  background-color: var(--color-google-earth);
+}
+.color-google-earth::after,
+.color-google-earth::before {
+  border-top-color: var(--color-google-earth);
+  border-bottom-color: var(--color-google-earth);
+}
+.color-google-earth:hover {
+  fill: var(--color-google-earth);
+}
+
+.color-adobe {
+  background-color: var(--color-adobe);
+}
+.color-adobe::after,
+.color-adobe::before {
+  border-top-color: var(--color-adobe);
+  border-bottom-color: var(--color-adobe);
+}
+.color-adobe:hover {
+  fill: var(--color-adobe);
+}
+
+.color-zoom {
+  background-color: #0B5CFF;
+}
+
+.color-zoom::after,
+.color-zoom::before {
+  border-top-color: #0B5CFF;
+  border-bottom-color: #0B5CFF;
+}
+
+.color-zoom:hover {
+  fill: #0B5CFF;
+}
+
+.color-calendar {
+  background-color: var(--color-calendar);
+}
+.color-calendar::after,
+.color-calendar::before {
+  border-top-color: var(--color-calendar);
+  border-bottom-color: var(--color-calendar);
+}
+.color-calendar:hover {
+  fill: var(--color-calendar);
+}
+
+.color-colab {
+  background-color: var(--color-colab);
+}
+.color-colab::after,
+.color-colab::before {
+  border-top-color: var(--color-colab);
+  border-bottom-color: var(--color-colab);
+}
+.color-colab:hover {
+  fill: var(--color-colab);
+}
+
+/* Repeat this for each app */
+.color-gcloud { background-color: var(--color-gcloud); }
+.color-gcloud::after,
+.color-gcloud::before { border-top-color: var(--color-gcloud); border-bottom-color: var(--color-gcloud); }
+.color-gcloud:hover { fill: var(--color-gcloud); }
+
+.color-drive { background-color: var(--color-drive); }
+.color-drive::after,
+.color-drive::before { border-top-color: var(--color-drive); border-bottom-color: var(--color-drive); }
+.color-drive:hover { fill: var(--color-drive); }
+
+.color-docs { background-color: var(--color-docs); }
+.color-docs::after,
+.color-docs::before { border-top-color: var(--color-docs); border-bottom-color: var(--color-docs); }
+.color-docs:hover { fill: var(--color-docs); }
+
+.color-gemini { background-color: var(--color-gemini); }
+.color-gemini::after,
+.color-gemini::before { border-top-color: var(--color-gemini); border-bottom-color: var(--color-gemini); }
+.color-gemini:hover { fill: var(--color-gemini); }
+
+.color-chrome { background-color: var(--color-chrome); }
+.color-chrome::after,
+.color-chrome::before { border-top-color: var(--color-chrome); border-bottom-color: var(--color-chrome); }
+.color-chrome:hover { fill: var(--color-chrome); }
+
+.color-forms { background-color: var(--color-forms); }
+.color-forms::after,
+.color-forms::before { border-top-color: var(--color-forms); border-bottom-color: var(--color-forms); }
+.color-forms:hover { fill: var(--color-forms); }
+
+.color-photos { background-color: var(--color-photos); }
+.color-photos::after,
+.color-photos::before { border-top-color: var(--color-photos); border-bottom-color: var(--color-photos); }
+.color-photos:hover { fill: var(--color-photos); }
+
+.color-sheets { background-color: var(--color-sheets); }
+.color-sheets::after,
+.color-sheets::before { border-top-color: var(--color-sheets); border-bottom-color: var(--color-sheets); }
+.color-sheets:hover { fill: var(--color-sheets); }
+
+.color-scholar { background-color: var(--color-scholar); }
+.color-scholar::after,
+.color-scholar::before { border-top-color: var(--color-scholar); border-bottom-color: var(--color-scholar); }
+.color-scholar:hover { fill: var(--color-scholar); }
+
+.color-jupyter {
+  background-color: var(--color-jupyter);
+}
+
+.color-jupyter::after,
+.color-jupyter::before {
+  border-top-color: var(--color-jupyter);
+  border-bottom-color: var(--color-jupyter);
+}
+
+.color-jupyter:hover {
+  fill: var(--color-jupyter);
+}
+
+.color-vscode {
+  background-color: var(--color-vscode);
+}
+
+.color-vscode::after,
+.color-vscode::before {
+  border-top-color: var(--color-vscode);
+  border-bottom-color: var(--color-vscode);
+}
+
+.color-vscode:hover {
+  fill: var(--color-vscode);
+}
+
+.color-gmail {
+  background-color: var(--color-gmail);
+}
+
+.color-gmail::after,
+.color-gmail::before {
+  border-top-color: var(--color-gmail);
+  border-bottom-color: var(--color-gmail);
+}
+
+.color-gmail:hover {
+  fill: var(--color-gmail);
+}
+
+.color-flask {
+  background-color: var(--color-flask);
+}
+
+.color-flask::after,
+.color-flask::before {
+  border-top-color: var(--color-flask);
+  border-bottom-color: var(--color-flask);
+}
+
+.color-flask:hover {
+  fill: var(--color-flask);
+}
+.color-onedrive {
+  background-color: var(--color-onedrive);
+}
+
+.color-onedrive::after,
+.color-onedrive::before {
+  border-top-color: var(--color-onedrive);
+  border-bottom-color: var(--color-onedrive);
+}
+
+.color-onedrive:hover {
+  fill: var(--color-onedrive);
+}
+.color-powerpoint { background-color: var(--color-powerpoint); }
+.color-powerpoint::after, .color-powerpoint::before {
+  border-top-color: var(--color-powerpoint);
+  border-bottom-color: var(--color-powerpoint);
+}
+.color-powerpoint:hover { fill: var(--color-powerpoint); }
+
+.color-word { background-color: var(--color-word); }
+.color-word::after, .color-word::before {
+  border-top-color: var(--color-word);
+  border-bottom-color: var(--color-word);
+}
+.color-word:hover { fill: var(--color-word); }
+
+.color-excel { background-color: var(--color-excel); }
+.color-excel::after, .color-excel::before {
+  border-top-color: var(--color-excel);
+  border-bottom-color: var(--color-excel);
+}
+.color-excel:hover { fill: var(--color-excel); }
+
+.color-outlook { background-color: var(--color-outlook); }
+.color-outlook::after, .color-outlook::before {
+  border-top-color: var(--color-outlook);
+  border-bottom-color: var(--color-outlook);
+}
+.color-outlook:hover { fill: var(--color-outlook); }
+
+.color-teams { background-color: var(--color-teams); }
+.color-teams::after, .color-teams::before {
+  border-top-color: var(--color-teams);
+  border-bottom-color: var(--color-teams);
+}
+.color-teams:hover { fill: var(--color-teams); }
+
+.color-vpn { background-color: var(--color-vpn); }
+.color-vpn::after, .color-vpn::before {
+  border-top-color: var(--color-vpn);
+  border-bottom-color: var(--color-vpn);
+}
+.color-vpn:hover { fill: var(--color-vpn); }
+
+.color-sharepoint { background-color: var(--color-sharepoint); }
+.color-sharepoint::after, .color-sharepoint::before {
+  border-top-color: var(--color-sharepoint);
+  border-bottom-color: var(--color-sharepoint);
+}
+.color-sharepoint:hover { fill: var(--color-sharepoint); }
+
+.color-windows { background-color: var(--color-windows); }
+.color-windows::after, .color-windows::before {
+  border-top-color: var(--color-windows);
+  border-bottom-color: var(--color-windows);
+}
+.color-windows:hover { fill: var(--color-windows); }
+
+.color-edge { background-color: var(--color-edge); }
+.color-edge::after, .color-edge::before {
+  border-top-color: var(--color-edge);
+  border-bottom-color: var(--color-edge);
+}
+.color-edge:hover { fill: var(--color-edge); }
+
+.color-linux {
+  background-color: var(--color-linux);
+}
+
+.color-linux::after,
+.color-linux::before {
+  border-top-color: var(--color-linux);
+  border-bottom-color: var(--color-linux);
+}
+
+.color-linux:hover {
+  fill: var(--color-linux);
+}
+
+.color-copilot {
+  background-color: var(--color-copilot);
+}
+
+.color-copilot::after,
+.color-copilot::before {
+  border-top-color: var(--color-copilot);
+  border-bottom-color: var(--color-copilot);
+}
+
+.color-copilot:hover {
+  fill: var(--color-copilot);
+}
+
+/* Remote Desktop */
+.color-remote-desktop {
+  background-color: var(--color-remote-desktop);
+}
+.color-remote-desktop::after,
+.color-remote-desktop::before {
+  border-top-color: var(--color-remote-desktop);
+  border-bottom-color: var(--color-remote-desktop);
+}
+.color-remote-desktop:hover {
+  fill: var(--color-remote-desktop);
+}
+
+/* TeamDynamix */
+.color-teamdynamix {
+  background-color: var(--color-teamdynamix);
+}
+.color-teamdynamix::after,
+.color-teamdynamix::before {
+  border-top-color: var(--color-teamdynamix);
+  border-bottom-color: var(--color-teamdynamix);
+}
+.color-teamdynamix:hover {
+  fill: var(--color-teamdynamix);
+}
+
+.color-pytorch {
+  background-color: var(--color-pytorch);
+}
+.color-pytorch::after,
+.color-pytorch::before {
+  border-top-color: var(--color-pytorch);
+  border-bottom-color: var(--color-pytorch);
+}
+.color-pytorch:hover {
+  fill: var(--color-pytorch);
+}
+
+.color-arcpy {
+  background-color: var(--color-arcpy);
+}
+.color-arcpy::after,
+.color-arcpy::before {
+  border-top-color: var(--color-arcpy);
+  border-bottom-color: var(--color-arcpy);
+}
+.color-arcpy:hover {
+  fill: var(--color-arcpy);
+}
+
+.color-chatgpt {
+  background-color: var(--color-chatgpt);
+}
+.color-chatgpt::after,
+.color-chatgpt::before {
+  border-top-color: var(--color-chatgpt);
+  border-bottom-color: var(--color-chatgpt);
+}
+.color-chatgpt:hover {
+  fill: var(--color-chatgpt);
+}
+
+.color-deepseek {
+  background-color: var(--color-deepseek);
+}
+.color-deepseek::after,
+.color-deepseek::before {
+  border-top-color: var(--color-deepseek);
+  border-bottom-color: var(--color-deepseek);
+}
+.color-deepseek:hover {
+  fill: var(--color-deepseek);
+}
+
+.color-brave {
+  background-color: var(--color-brave);
+}
+
+.color-brave::after,
+.color-brave::before {
+  border-top-color: var(--color-brave);
+  border-bottom-color: var(--color-brave);
+}
+
+.color-brave:hover {
+  fill: var(--color-brave);
+}
+.color-github {
+  background-color: var(--color-github);
+}
+.color-github::after,
+.color-github::before {
+  border-top-color: var(--color-github);
+  border-bottom-color: var(--color-github);
+}
+.color-github:hover {
+  fill: var(--color-github);
+}
+
+.color-instagram {
+  background-color: var(--color-instagram);
+}
+.color-instagram::after,
+.color-instagram::before {
+  border-top-color: var(--color-instagram);
+  border-bottom-color: var(--color-instagram);
+}
+.color-instagram:hover {
+  fill: var(--color-instagram);
+}
+
+.color-facebook {
+  background-color: #0866FF;
+}
+.color-facebook::after,
+.color-facebook::before {
+  border-top-color: #0866FF;
+  border-bottom-color: #0866FF;
+}
+.color-facebook:hover {
+  fill: #0866FF;
+}
+
+.color-linkedin {
+  background-color: var(--color-linkedin);
+}
+.color-linkedin::after,
+.color-linkedin::before {
+  border-top-color: var(--color-linkedin);
+  border-bottom-color: var(--color-linkedin);
+}
+.color-linkedin:hover {
+  fill: var(--color-linkedin);
+}
+
+.color-whatsapp {
+  background-color: var(--color-whatsapp);
+}
+.color-whatsapp::after,
+.color-whatsapp::before {
+  border-top-color: var(--color-whatsapp);
+  border-bottom-color: var(--color-whatsapp);
+}
+.color-whatsapp:hover {
+  fill: var(--color-whatsapp);
+}
