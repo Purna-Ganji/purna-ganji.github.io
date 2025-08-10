@@ -60,7 +60,7 @@ nav ul li a:hover  {
     border-color: #ff003c;
 }
 
-/* Make fixed header play nice with notches + ensure content isn't hidden */
+/* Make fixed header play nice with notches the ensure content isn't hidden */
 :root {
   --header-h: 54px; /* mobile header height */
 }
