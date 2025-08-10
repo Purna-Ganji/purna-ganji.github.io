@@ -284,3 +284,123 @@ footer:hover {
 .reference-contact a:hover {
   text-decoration: underline;
 }
+@media (max-width: 480px) {
+    .grid-box {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;                 /* a bit tighter on phones */
+    gap: 0;                        /* kill extra internal gaps if any */
+  }
+
+  /* Uniform image area across all cards */
+  .project-image-wrapper {
+    flex: 0 0 170px;               /* same visual height for all images */
+    margin: 0 0 .45rem;            /* small gap below image */
+  }
+  .project-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;             /* uniform fill; swap to 'contain' if you prefer no crop */
+    object-position: center;
+    border-radius: 8px;
+  }
+
+  /* Title spacing and size */
+  .project-title-wrapper {
+    min-height: auto;
+    margin: .35rem 0 .25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .project-title {
+    font-size: 1rem;
+    margin: 0;
+    text-align: center;
+  }
+
+  /* Description fills leftover space (pushes button down) */
+  .project-desc-wrapper {
+    min-height: auto;
+    margin: .2rem 0 .6rem;
+    flex: 1;                        /* takes remaining height */
+    display: flex;
+    align-items: center;            /* vertically center text */
+    justify-content: center;
+  }
+  .project-description {
+    font-size: .9rem;
+    line-height: 1.35;
+    margin: 0;
+    text-align: center;
+  }
+
+  /* Button anchored at the bottom of the card */
+  .project-button {
+    margin-top: auto;               /* stick to bottom */
+    align-self: center;
+    font-size: .9rem;
+    padding: .5em 1.1em;
+    border-radius: 1.6em;
+  }
+
+  /* References section */
+  .reference-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+
+  /* Make photo smaller for mobile */
+  .reference-photo img {
+    width: 150px;
+    height: 150px;
+    border-radius: 8px;
+  }
+
+  /* Adjust text layout for stacking */
+  .reference-details {
+    display: block; /* break the grid layout */
+    text-align: center;
+    width: 100%;
+  }
+
+  .reference-header {
+    margin-bottom: 6px;
+  }
+
+  .reference-details .label {
+    display: block;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 2px;
+    text-align: left;
+  }
+
+  .reference-details .value {
+    display: block;
+    color: #b8ffff;
+    margin-bottom: 10px;
+    padding-left: 0;
+    text-align: left;
+ 
+  }
+
+  /* Reduce name font size */
+  .reference-name {
+    font-size: 1.1rem;
+  }
+.reference-details .value a {
+    word-break: break-all;
+  }
+
+
+  .reference-department,
+  .reference-relationship {
+    font-size: 0.85rem;
+  }
+  .reference-contact {
+    font-size: 0.8rem;
+  }
+}
