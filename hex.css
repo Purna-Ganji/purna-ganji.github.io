@@ -231,7 +231,189 @@
   color: white;
   cursor: default;
 }
+/* ====== Tablet & small laptops (≤ 900px) ====== */
+@media (max-width: 900px) {
+  :root {
+    --hex-width: 96px;
+    --hex-between: 8px;
+    /* keep your computed vars tied to --hex-width */
+    --hex-height: calc(var(--hex-width) / 1.69);
+    --hex-margin: calc(var(--hex-width) / 2);
+    --hex-border: calc(var(--hex-margin) / 1.73);
+  }
 
+  /* 3 columns honeycomb */
+  .hexagon-container {
+    grid-template-columns: repeat(3, var(--hex-width));
+    grid-auto-rows: calc(var(--hex-width) - 28.87px / 2);
+    grid-gap: var(--hex-between) var(--hex-between);
+    padding-bottom: var(--hex-border);
+  }
+
+  /* Offsets for 3-col rows: shift the 2nd row in each 6-item block */
+  .hexagon:nth-child(6n + 4),
+  .hexagon:nth-child(6n + 5),
+  .hexagon:nth-child(6n + 6) {
+    margin-left: calc(var(--hex-width) / 2 + var(--hex-between) / 2);
+  }
+
+  /* Icon & label tweaks */
+  .hex-img { width: 62px; height: 62px; }
+  .hex-label { font-size: 0.8rem; left: 104%; }
+}
+
+/* ===========================
+   MOBILE FIXES (≤ 480px)
+   =========================== */
+@media (max-width: 480px) {
+  :root {
+    --hex-width: 44px;
+    --hex-between: 4px;
+    --hex-height: calc(var(--hex-width) / 1.73);
+    --hex-margin: calc(var(--hex-width) / 2);
+    --hex-border: calc(var(--hex-margin) / 1.73);
+    --hex-row-offset: calc(var(--hex-width)/2 + var(--hex-between)/2);
+    --row2-shift: -25px;  /* negative = left, positive = right */
+  }
+
+  /* Fix 1: Remove left gap on first hexagon */
+  .hexagon-container {
+    grid-template-columns: repeat(4, var(--hex-width));
+    grid-gap: 0 var(--hex-between); /* Horizontal gap only */
+    row-gap: 12px;
+    max-width: 100%;
+    justify-content: center; /* Center the grid */
+    padding: 10px; /* Remove container padding */
+    margin: 0 calc(var(--hex-between) / 2); /* Balance side margins */
+  }
+
+  /* Fix 2: Eliminate gap between 3rd and 4th hexagons */
+  .hexagon {
+    width: var(--hex-width);
+    height: var(--hex-height);
+    margin: 0 !important;
+    transform: none !important;
+  }
+  /* Keep triangle caps in sync with size */
+  .hexagon::before { border-bottom: var(--hex-border) solid var(--color-hex-default); }
+  .hexagon::after  { border-top:    var(--hex-border) solid var(--color-hex-default); }
+    .hexagon > img {
+    width: 74% !important;          /* whatever you want on phones */
+    height: 74% !important;
+    object-fit: contain;
+    -webkit-clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  }
+
+  /* Keep icons *inside* the hex shape */
+  .hex-img{
+    width: 64%;                 /* % of hex width – scales with hex */
+    height: 64%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    margin: 0 auto;
+    /* hard-clip the image to a true hex so it can't bleed */
+    -webkit-clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  }
+
+  /* Labels/tooltips smaller on phones */
+  .hex-label{
+    font-size: .72rem;
+    padding: 3px 8px;
+  }
+
+  /* If you have *text inside hexes* (course hexes etc.) */
+  .course-hexagon{
+    width: 120px;
+    height: 100px;
+    padding: 9px;
+    /* true hex clip so inner text/images cannot escape */
+    -webkit-clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  }
+  .course-hexagon-text{
+    font-size: .42rem;          /* smaller line height & text */
+    line-height: 1.15;
+    padding: 4px 6px;
+    word-break: normal;
+    hyphens: none;
+    text-wrap: balance;
+  }
+
+
+  /* First row (4 hexagons) */
+  .hexagon:nth-child(1),
+  .hexagon:nth-child(2),
+  .hexagon:nth-child(3),
+  .hexagon:nth-child(4) {
+    /* No special treatment needed */
+     margin-left: calc(-1 * var(--hex-between) / 2) !important;
+    margin-right: calc(-1 * var(--hex-between) / 2) !important;
+  }
+
+/* ✅ Center the 3-item rows (every 7): items 5–7 go to cols 2–4 */
+  .hexagon:nth-child(7n + 5) { grid-column: 2; }
+  .hexagon:nth-child(7n + 6) { grid-column: 3; }
+  .hexagon:nth-child(7n + 7) { grid-column: 4; }
+
+  .hexagon:nth-child(7n + 5),
+  .hexagon:nth-child(7n + 6),
+  .hexagon:nth-child(7n + 7) {
+    transform: translateX(var(--row2-shift)) !important;
+  }
+
+  /* Fourth row (3 hexagons) */
+  .hexagon:nth-child(12),
+  .hexagon:nth-child(13),
+  .hexagon:nth-child(14) {
+    margin-left: calc(var(--hex-width)/2 + var(--hex-between)/2);
+  }
+}
+
+
+
+/* ====== Very small phones (≤ 360px) -> 2 columns ====== */
+@media (max-width: 360px) {
+  :root {
+    --hex-width: 28px;
+    --hex-between: 6px;
+    --hex-height: calc(var(--hex-width) / 1.69);
+    --hex-margin: calc(var(--hex-width) / 2);
+    --hex-border: calc(var(--hex-margin) / 1.73);
+  }
+
+  .hexagon-container {
+    grid-template-columns: repeat(2, var(--hex-width));
+  }
+
+  /* Offsets for 2-col rows: shift every 3rd & 4th in each 4-item block */
+  .hexagon:nth-child(4n + 3),
+  .hexagon:nth-child(4n + 4) {
+    margin-left: calc(var(--hex-width) / 2 + var(--hex-between) / 2);
+  }
+}
+
+/* ====== Courses hex grid (your .course-hexagon-container) ====== */
+@media (max-width: 900px) {
+  .course-hexagon-container {
+    grid-template-columns: repeat(4, 100px);
+    grid-auto-rows: 88px;
+    grid-gap: 4px 10px;
+    margin-top: -12px;
+  }
+  .course-hexagon { width: 120px; height: 100px; padding: 8px; }
+}
+
+@media (max-width: 360px) {
+  .course-hexagon-container {
+    grid-template-columns: repeat(2, 92px);
+    grid-auto-rows: 82px;
+    grid-gap: 4px 8px;
+    margin-top: -8px;
+  }
+}
 /* Colors */
 .color-java {
   background-color: var(--color-java);
