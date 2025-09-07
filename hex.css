@@ -81,7 +81,8 @@
   --color-facebook:   #0866FF;
   --color-linkedin:   #0076b580;
   --color-whatsapp:   #25D366;
-
+    --color-metashape:   #30D366;
+  --color-dji:   #0971CE;
 }
 
 /* Hexagons */
@@ -1142,4 +1143,28 @@
 }
 .color-whatsapp:hover {
   fill: var(--color-whatsapp);
+}
+
+.color-metashape {
+  background-color: var(--color-metashape);
+}
+.color-metashape::after,
+.color-metashape::before {
+  border-top-color: var(--color-metashape);
+  border-bottom-color: var(--color-metashape);
+}
+.color-metashape:hover {
+  fill: var(--color-metashape);
+}
+
+.color-dji {
+  background-color: var(--color-dji);
+}
+.color-dji::after,
+.color-dji::before {
+  border-top-color: var(--color-dji);
+  border-bottom-color: var(--color-dji);
+}
+.color-dji:hover {
+  fill: var(--color-dji);
 }
