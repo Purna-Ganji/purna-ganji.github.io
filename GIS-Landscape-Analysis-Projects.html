@@ -233,6 +233,184 @@ font-size: 14px;
   </div>
 </section>
 
+<section id="viewsheds" class="glass pad" aria-labelledby="title-viewsheds">
+  <h1 id="title-viewsheds" class="title">
+    Line-of-Sight Viewshed Analysis for Wireless Coverage & Monitoring - Minnesota state,Winona County
+  </h1>
+  <p class="subtitle">
+    Landscape Analysis (GEO 669) · ArcGIS Pro · DEM-based visibility · Observer points & tower height
+  </p>
+
+  
+  <div class="hero">
+    <img src="GIS Images/ViewSheds.jpg"
+         alt="Viewshed map showing visible areas from selected towers/monitoring stations" />
+  </div>
+
+    <!-- Objective -->
+  <h2>Overall Objective</h2>
+  <p>
+    Evaluate whether Winona County flood-monitoring stations can transmit via line-of-sight (LOS) radio
+    to existing 800-MHz antenna towers <strong>with redundancy</strong> (each station must see ≥ 2 towers).
+    Run a <strong>Geodesic Viewshed</strong> on a 30-m DEM to quantify visibility, then summarize per-station
+    tower counts to determine viability.
+  </p>
+
+  <!-- Project Description -->
+  <h2>Project Description</h2>
+
+  <h3>1) Study Area Setup</h3>
+  <ul>
+    <li>Created a project geodatabase and added statewide foundational layers.</li>
+    <li>Subset to Winona County:
+      <ul>
+        <li>Winona County boundary (for map extent and output mask).</li>
+        <li>Clipped 30-m DEM to Winona County; generated hillshade for cartography.</li>
+        <li>National Hydrography Dataset (NHD) Flowline filtered to <em>perennial streams</em> for context.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>2) Viewshed Modeling (Physics)</h3>
+  <p>Configured <strong>Geodesic Viewshed</strong> (accounts for Earth curvature and standard atmospheric refraction) with:</p>
+  <dl>
+  <dt>Observer offset (<code>OFFSETA</code>): 305 m (tower antenna height above ground)</dt>
+  <dt>Surface/target offset (<code>OFFSETB</code>): 3 m (station antenna height at flood-monitoring site)</dt>
+  <dt>Analysis type: <strong>Frequency</strong> (each raster cell stores the number of towers with LOS to that cell)</dt>
+  <dt>Angular limits: Horizontal 0–360°; Vertical +90° to −90° (full dome)</dt>
+  <dt>Environments: Snap Raster = DEM; Cell Size = 30 m; Mask = Winona County; Z-factor = 1 (DEM in meters)</dt>
+</dl>
+
+
+  <h3>3) Per-Station Visibility & Redundancy</h3>
+  <ul>
+    <li>Ran <strong>Extract Multi Values to Points</strong> to sample the viewshed <em>frequency</em> at each station point.</li>
+    <li>Wrote the sampled value to a field <code>TowersSeen</code> (number of towers in LOS from that station).</li>
+    <li>Evaluated the redundancy rule: <code>TowersSeen ≥ 2</code> required for LOS feasibility at each station.</li>
+  </ul>
+
+  <h3>4) Cartography & Communication</h3>
+  <ul>
+    <li>Classified the frequency raster for the map legend using intuitive bins:
+      <ul>
+        <li>1 (single tower)</li>
+        <li>2–3 (basic redundancy)</li>
+        <li>4–5 (strong redundancy)</li>
+        <li>6–8 (excellent redundancy)</li>
+      </ul>
+    </li>
+    <li>Placed semi-transparent frequency raster over hillshade for terrain context.</li>
+    <li>Symbolized stations by priority (meets ≥ 2 towers vs. does not) and towers by type.</li>
+    <li>Added perennial streams and a Minnesota inset highlighting Winona County.</li>
+  </ul>
+
+  <!-- Data Sources -->
+  <h2>Data Sources</h2>
+  <ul>
+    <li><strong>Digital Elevation Model (30 m, statewide):</strong> elevation surface used for geodesic viewshed.</li>
+    <li><strong>State Boundary (Minnesota):</strong> polygon for inset/context.</li>
+    <li><strong>County Boundaries (Minnesota):</strong> polygons; Winona extracted for mask and extent.</li>
+    <li><strong>NHD High Resolution – Flowline:</strong> lines; filtered to perennial streams (FCode 46006).</li>
+    <li><strong>Antenna Towers (800 MHz):</strong> assignment-provided observer points.</li>
+    <li><strong>Flood Monitoring Stations:</strong> assignment-provided target points.</li>
+  </ul>
+
+  <!-- Coordinate Systems / Projections -->
+  <h2>Coordinate Systems / Projections</h2>
+  <ul>
+    <li><strong>Working / map projection (recommended & used):</strong>
+      NAD 1983 / UTM Zone 15N (EPSG: 26915) or NAD 1983 (2011) / UTM Zone 15N (EPSG: 6339).</li>
+    <li><strong>Rationale:</strong> preserves local distances/areas; keeps DEM units (meters) aligned with offsets (m) and cell size (30 m).</li>
+    <li><strong>Raster environment:</strong> Cell Size = 30 m, Snap Raster = DEM, Z-factor = 1.</li>
+    <li><strong>Output mask:</strong> Winona County polygon (tidy outputs and cleaner layout).</li>
+  </ul>
+
+  <!-- Assumptions & QA/QC -->
+  <h2>Assumptions & QA/QC</h2>
+  <ul>
+    <li><strong>Earth curvature/refraction:</strong> geodesic method enabled; standard refractivity assumed.</li>
+    <li><strong>Heights:</strong> 305 m tower <code>OFFSETA</code>, 3 m station <code>OFFSETB</code> applied consistently.</li>
+    <li><strong>DEM suitability:</strong> 30-m resolution adequate for county-scale planning; sub-30-m terrain features (buildings/trees) not modeled.</li>
+    <li><strong>Layer validation:</strong> verified tower and station locations, projected all layers to the working CRS, ensured consistent units.</li>
+  </ul>
+
+  <!-- Results -->
+  <h2>Results (Findings)</h2>
+  <ul>
+    <li>The frequency viewshed raster returned integer values from <strong>1–6</strong> across Winona County.</li>
+    <li>When sampled at station points, <code>TowersSeen</code> was <strong>0 or 1</strong> at all stations
+      (cells with no visibility are NoData and treated as 0 in the table).</li>
+    <li><strong>Redundancy test:</strong> No stations achieved <code>≥ 2</code> towers visible at their current locations –
+      the redundancy requirement was <strong>not met</strong>.</li>
+  </ul>
+
+  <!-- Conclusion -->
+  <h2>Conclusion</h2>
+  <p>
+    Given current tower placement and local terrain (bluffs/valleys), LOS telemetry does <strong>not</strong> provide
+    redundant connectivity for the flood-monitoring stations in Winona County. The county-scale geodesic viewshed on the 30-m DEM
+    indicates stations see at most one tower (or none), failing the ≥ 2-tower redundancy criterion.
+  </p>
+
+  <!-- Implications / Next Steps -->
+  <h2>Implications / Next Steps</h2>
+  <ul>
+    <li><strong>Network design:</strong> Add/relocate towers or repeaters to overcome terrain blocking in valleys.</li>
+    <li><strong>Site engineering:</strong> Increase station mast heights where feasible; re-site stations onto local ridgelines.</li>
+    <li><strong>Alternate backhaul:</strong> Evaluate cellular/microwave/satellite where LOS cannot achieve ≥ 2-tower visibility.</li>
+    <li><strong>Higher-resolution terrain:</strong> Consider LiDAR-derived DEM/DSM with clutter (vegetation/buildings) for micro-siting.</li>
+    <li><strong>Sensitivity tests:</strong> Re-run viewsheds with varied <code>OFFSETA</code>/<code>OFFSETB</code>, and constrained azimuth/vertical angles.</li>
+  </ul>
+  <!-- Buttons -->
+  <div class="btns">
+    
+    <a class="btn" href="GIS Images/ViewSheds.jpg" target="_blank" rel="noopener noreferrer">🗺️ View Map (Image)</a>
+    <a class="btn secondary" href="https://livemissouristate-my.sharepoint.com/:f:/g/personal/pg84s_login_missouristate_edu/EhDkzcRXjIpNsOKkma8lL4gBHVtnx9fK4_sDUioIfKSQTg?e=aIJ0SQ" target="_blank" rel="noopener noreferrer">📂 Full Project (OneDrive)</a>
+  </div>
+
+  <!-- Details grid -->
+  <div class="project-description">
+    <div class="info-grid">
+      <div class="info-block">
+        <h3>Workflow</h3>
+        <ul>
+          <li>Prepare DEM (project to common CRS; set cell size & extent)</li>
+          <li>Create/verify observer points (towers/stations) with <strong>OFFSETA</strong> (observer height)</li>
+          <li><strong>Viewshed</strong> (or Viewshed 2): enable curvature/refraction as needed</li>
+          <li>Combine observers: binary union or <em>frequency/percent visible</em> outputs</li>
+          <li><strong>Extract Multi Values to Points</strong> to count visible towers per station</li>
+          <li>Cartographic layout (legend, scale, north arrow, credits)</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>Key Parameters</h3>
+        <ul>
+          <li>Observer height (<code>OFFSETA</code>) e.g., 30–60 m tower</li>
+          <li>Target height (<code>OFFSETB</code>) for device/antenna at station</li>
+          <li>Earth curvature & refraction (True/False; refractivity ~0.13)</li>
+          <li>Maximum radius / analysis extent</li>
+          <li>Output: Binary visible, Count/Percent visible</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>Tools &amp; Techniques</h3>
+        <ul>
+          <li>ArcGIS Pro: <em>Viewshed / Viewshed 2</em></li>
+          <li>Spatial Analyst: <em>Raster Calculator</em>, <em>Extract Multi Values to Points</em></li>
+          <li>Data Management: <em>Add/Calculate Field</em>, <em>Join</em>, <em>Project</em></li>
+          <li>Symbology: binary/graded visibility, station counts</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>Deliverables</h3>
+        <ul>
+          <li>Visibility map (single & multi-observer)</li>
+          <li>Table: stations sorted by # of towers in LOS</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
 
       <!-- Project: Watershed Modeling (example) -->
       <section id="watershed-modeling" class="glass pad" aria-labelledby="title-wm">
@@ -242,16 +420,6 @@ font-size: 14px;
           <img src="watershed-map.png" alt="Watershed map" />
         </div>
         <p style="margin-top:14px">DEM-driven hydrologic analysis to delineate watersheds and visualize drainage networks for flood susceptibility insights.</p>
-      </section>
-
-      <!-- Project: AI Structures (example) -->
-      <section id="ai-structures" class="glass pad" aria-labelledby="title-ai">
-        <h1 id="title-ai" class="title">Automated Structure Mapping for Flood Risk Assessment — Treasure Beach, Jamaica</h1>
-        <p class="subtitle">ArcGIS Pro Deep Learning · ResNet-152 · NMS, Tile & Pad tuning</p>
-        <div class="hero">
-          <img src="ai-structures-map.png" alt="AI structure detection output" />
-        </div>
-        <p style="margin-top:14px">High-resolution drone imagery + ArcGIS Deep Learning tools to detect structures, achieving high mapping completeness with tuned parameters.</p>
       </section>
 
     </div>
