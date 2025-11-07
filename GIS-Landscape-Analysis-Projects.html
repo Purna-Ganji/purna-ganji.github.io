@@ -412,15 +412,172 @@ font-size: 14px;
   </div>
 </section>
 
-      <!-- Project: Watershed Modeling (example) -->
-      <section id="watershed-modeling" class="glass pad" aria-labelledby="title-wm">
-        <h1 id="title-wm" class="title">Terrain-Based Hydrologic Modeling and Watershed Delineation</h1>
-        <p class="subtitle">Flow Direction · Flow Accumulation · Strahler Stream Order</p>
+<!-- ===================== Watershed Delineation Project (Garvin Brook) ===================== -->
+<section id="watershed-delineation" class="glass pad" aria-labelledby="title-watershed">
+        <h1 id="title-watershed" class="title">
+            Garvin Brook Watershed Delineation and Hydrologic Analysis - Minnesota
+        </h1>
+        <p class="subtitle">
+            Surface Hydrology Modeling · ArcGIS Pro · LiDAR DEM · Watershed Delineation
+        </p>
+
         <div class="hero">
-          <img src="watershed-map.png" alt="Watershed map" />
+            <img src="GIS Images/Watershed Delineation.jpg" 
+                 alt="Watershed map showing Garvin Brook catchment area with flow accumulation and terrain" />
         </div>
-        <p style="margin-top:14px">DEM-driven hydrologic analysis to delineate watersheds and visualize drainage networks for flood susceptibility insights.</p>
-      </section>
+
+        <!-- Objective -->
+        <h2>Overall Objective</h2>
+        <p>
+            Model surface hydrology using LiDAR-derived elevation data to delineate the Garvin Brook watershed in Minnesota.
+            Process a raw Digital Elevation Model (DEM) into a hydrologically conditioned surface, derive flow direction and flow accumulation grids,
+            and generate an accurate watershed boundary draining to a specific outlet (pour point).
+        </p>
+
+        <!-- Project Description -->
+        <h2>Project Description</h2>
+
+        <h3>1) Data Preparation & Terrain Processing</h3>
+        <ul>
+            <li>Acquired 3-meter LiDAR-derived Digital Elevation Model from Minnesota Geospatial Information Office (MnGeo)</li>
+            <li>Created hillshade raster (GB_3m_DEM_HS) for terrain visualization and validation</li>
+            <li>Verified coordinate systems and ensured proper raster alignment for analysis</li>
+        </ul>
+
+        <h3>2) Hydrologic Conditioning</h3>
+          <p>Applied Spatial Analyst hydrology tools to create continuous flow surfaces:</p>
+          <p><ul>
+              <li><strong>Fill Processing:</strong> Removed spurious sinks from DEM to ensure continuous downstream flow<br></li>
+              <li><strong>Flow Direction (D8 Algorithm):</strong> Established steepest descent path for each cell in the filled DEM<br></li>
+              <li><strong>Flow Accumulation:</strong> Identified stream channels and contributing areas based on flow direction</li>
+          </ul>
+          </p>
+
+        <h3>3) Watershed Delineation</h3>
+        <ul>
+            <li>Used Snap Pour Point tool to align the watershed outlet to the highest-accumulation channel cell (20 m search radius)</li>
+            <li>Executed Watershed tool to delineate the contributing catchment area</li>
+            <li>Converted raster watershed to vector polygon boundary for final output</li>
+        </ul>
+
+        <h3>4) Validation & Cartography</h3>
+        <ul>
+            <li>Verified flow paths and watershed boundary against hillshade and aerial imagery</li>
+            <li>Applied WMS imagery overlay from MnGeo for base-map context</li>
+            <li>Used transparency blending and symbology design to create clear visualization of results</li>
+        </ul>
+
+        <!-- Data Sources -->
+        <h2>Data Sources</h2>
+        <ul>
+            <li><strong>GB_3m_DEM:</strong> 3-meter LiDAR-derived Digital Elevation Model from Minnesota Geospatial Information Office (MnGeo) LiDAR Program</li>
+            <li><strong>GB_3m_DEM_HS:</strong> Hillshade raster derived from DEM for terrain visualization</li>
+            <li><strong>GB_Mouth_Unsnapped_Pour_Point:</strong> Initial watershed outlet feature from course dataset</li>
+            <li><strong>GB_3m_DEM_Fill_FlowAcc:</strong> Pre-generated flow-accumulation raster derived from filled DEM</li>
+            <li><strong>MnGeo WMS (2011 Color South MN):</strong> Aerial imagery for base-map context from MnGeo Web Map Service</li>
+        </ul>
+
+        <!-- Coordinate Systems / Projections -->
+        <h2>Coordinate Systems / Projections</h2>
+        <ul>
+            <li><strong>Working projection:</strong> UTM Zone 15N appropriate for Minnesota regional analysis</li>
+            <li><strong>Raster environment:</strong> Consistent 3-meter cell size maintained throughout processing</li>
+            <li><strong>Alignment:</strong> Snap raster settings ensured proper grid alignment for hydrologic tools</li>
+        </ul>
+
+        <!-- Assumptions & QA/QC -->
+        <h2>Assumptions & QA/QC</h2>
+        <ul>
+            <li><strong>D8 Algorithm:</strong> Used single-flow direction model assuming steepest descent path</li>
+            <li><strong>Sink Removal:</strong> Fill tool applied to eliminate all depressions for continuous flow</li>
+            <li><strong>Pour Point Alignment:</strong> 20-meter snap distance ensured accurate channel alignment</li>
+            <li><strong>Validation:</strong> Visual verification of flow paths against terrain and imagery</li>
+        </ul>
+
+        <!-- Results -->
+        <h2>Results (Findings)</h2>
+        <ul>
+            <li>Successfully generated hydrologically correct DEM (GB_3m_DEM_Fill) with continuous flow paths</li>
+            <li>Computed accurate flow-direction grid (gb_3m_dem_Fill_FlowDir) using D8 algorithm</li>
+            <li>Aligned pour point to stream channel using Snap Pour Point with 20-meter search radius</li>
+            <li>Delineated precise Garvin Brook watershed boundary and converted to polygon format</li>
+            <li>Verified watershed accuracy against aerial imagery and terrain features</li>
+        </ul>
+
+        <!-- Conclusion -->
+        <h2>Conclusion</h2>
+        <p>
+            The hydrologic modeling workflow successfully delineated the Garvin Brook watershed using LiDAR-derived elevation data.
+            The processed DEM and derived flow products provide a reliable foundation for water-resources applications including
+            flood analysis, drainage-area estimation, and stormwater management planning in the Winona County region.
+        </p>
+
+        <!-- Implications / Next Steps -->
+        <h2>Implications / Next Steps</h2>
+        <ul>
+            <li><strong>Floodplain Mapping:</strong> Use watershed boundaries for flood risk assessment and FEMA floodplain delineation</li>
+            <li><strong>Stormwater Modeling:</strong> Integrate with hydrologic models for runoff and peak flow calculations</li>
+            <li><strong>Land Use Planning:</strong> Apply watershed analysis for conservation planning and development regulations</li>
+            <li><strong>Higher-Resolution Analysis:</strong> Consider sub-meter DEM for more detailed channel network mapping</li>
+            <li><strong>Multi-direction Flow:</strong> Explore D-infinity algorithm for complex terrain situations</li>
+        </ul>
+
+        <!-- Buttons -->
+        <div class="btns">
+            <a class="btn secondary" href="https://livemissouristate-my.sharepoint.com/:f:/g/personal/pg84s_login_missouristate_edu/Erp63jie6HRCqHteGalnlC8BLQMPEN8sX0Af90k6EK4iNw?e=8daqpD" target="_blank" rel="noopener noreferrer">📂 Full Project (OneDrive)</a>
+        </div>
+
+        <!-- Details grid -->
+        <div class="project-description">
+            <div class="info-grid">
+                <div class="info-block">
+                    <h3>Workflow</h3>
+                    <ul>
+                        <li>Prepare DEM (verify projection, cell size & extent)</li>
+                        <li>Apply Fill tool to remove sinks and create hydrologically correct surface</li>
+                        <li>Calculate Flow Direction using D8 algorithm</li>
+                        <li>Generate Flow Accumulation to identify stream networks</li>
+                        <li>Snap Pour Point to highest flow accumulation cell</li>
+                        <li>Delineate Watershed boundary</li>
+                        <li>Convert raster to polygon for final output</li>
+                    </ul>
+                </div>
+                
+                <div class="info-block">
+                    <h3>Key Parameters</h3>
+                    <ul>
+                        <li>DEM Resolution: 3-meter LiDAR</li>
+                        <li>Flow Algorithm: D8 (single flow direction)</li>
+                        <li>Snap Distance: 20 meters for pour point alignment</li>
+                        <li>Sink Removal: Complete depression filling</li>
+                        <li>Output: Vector watershed polygon</li>
+                    </ul>
+                </div>
+                
+                <div class="info-block">
+                    <h3>Tools &amp; Techniques</h3>
+                    <ul>
+                        <li>ArcGIS Pro: Spatial Analyst Hydrology Tools</li>
+                        <li>Fill, Flow Direction, Flow Accumulation</li>
+                        <li>Snap Pour Point, Watershed</li>
+                        <li>Raster to Polygon conversion</li>
+                        <li>WMS integration for base mapping</li>
+                        <li>Hillshade generation for terrain visualization</li>
+                    </ul>
+                </div>
+                
+                <div class="info-block">
+                    <h3>Deliverables</h3>
+                    <ul>
+                        <li>Hydrologically conditioned DEM</li>
+                        <li>Flow direction and accumulation rasters</li>
+                        <li>Watershed boundary polygon</li>
+                        <li>Professional watershed delineation map</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
 
     </div>
   </div>
