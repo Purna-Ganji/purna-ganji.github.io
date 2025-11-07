@@ -579,6 +579,162 @@ font-size: 14px;
         </div>
     </section>
 
+    <section id="temperature-analysis" class="glass pad" aria-labelledby="title-temperature">
+  <h1 id="title-temperature" class="title">
+    Animated Spatiotemporal Visualization of September Air Temperatures in China (1854–2014)
+  </h1>
+  <p class="subtitle">
+    Climate Data Analysis · ArcGIS Pro · Kriging Interpolation · Temporal Animation
+  </p>
+
+  <div class="hero">
+    <img src="GIS Images/China September-1854-2014.gif"
+         alt="Animated temperature map sequence showing China temperature changes from 1854 to 2014" />
+  </div>
+
+  <!-- Objective -->
+  <h2>Overall Objective</h2>
+  <p>
+    Model, visualize, and animate the long-term spatial and temporal patterns of September air temperature across China from 1854 to 2014 using kriging interpolation and consistent symbology parameters, enabling clear communication of historical climate trends through geospatial animation.
+  </p>
+
+  <!-- Project Description -->
+  <h2>Project Description</h2>
+
+  <h3>1) Data Processing & Preparation</h3>
+  <ul>
+    <li>Collected point temperature data spanning 160 years (1854-2014) for September months</li>
+    <li>Processed and organized temporal data into decadal intervals in ArcGIS Pro</li>
+    <li>Applied uniform coordinate system (WGS 1984 Web Mercator Auxiliary Sphere) for spatial consistency</li>
+  </ul>
+
+  <h3>2) Spatial Interpolation & Surface Generation</h3>
+  <p>Applied geostatistical analysis to create continuous temperature surfaces:</p>
+  <dl>
+    <dt>Ordinary Kriging:</dt><dd>Used Spatial Analyst Toolbox for optimal interpolation of point temperature data</dd>
+    <dt>Raster Generation:</dt><dd>Created 17 individual raster surfaces representing each time period</dd>
+    <dt>Quality Control:</dt><dd>Validated interpolation results against original point data</dd>
+  </dl>
+
+  <h3>3) Cartographic Standardization</h3>
+  <ul>
+    <li>Applied consistent symbology range (273 K – 308 K) across all 17 raster maps</li>
+    <li>Overlaid China and neighboring country boundaries for geographic context</li>
+    <li>Exported all maps as high-resolution PNG images at 300 DPI</li>
+  </ul>
+
+  <h3>4) Animation Production</h3>
+  <ul>
+    <li>Compiled 17 raster maps into sequential animation using Python-based automation</li>
+    <li>Configured one-second display per frame with smooth fade transitions</li>
+    <li>Produced final animated visualization showing spatial and temporal temperature evolution</li>
+  </ul>
+
+  <!-- Data Sources -->
+  <h2>Data Sources</h2>
+  <ul>
+    <li><strong>Historical Temperature Records:</strong> Point temperature data for China (1854-2014)</li>
+    <li><strong>Administrative Boundaries:</strong> China and neighboring country polygons for map context</li>
+    <li><strong>Base Cartography:</strong> Reference layers for geographic orientation</li>
+  </ul>
+
+  <!-- Coordinate Systems / Projections -->
+  <h2>Coordinate Systems / Projections</h2>
+  <ul>
+    <li><strong>Primary Projection:</strong> WGS 1984 Web Mercator Auxiliary Sphere</li>
+    <li><strong>Rationale:</strong> Ensured spatial consistency across all temporal outputs</li>
+    <li><strong>Standardization:</strong> Uniform coordinate reference for accurate temporal comparison</li>
+  </ul>
+
+  <!-- Assumptions & QA/QC -->
+  <h2>Assumptions & QA/QC</h2>
+  <ul>
+    <li><strong>Interpolation Method:</strong> Ordinary Kriging provided optimal surface estimation</li>
+    <li><strong>Temporal Resolution:</strong> Decadal intervals adequately captured climate trends</li>
+    <li><strong>Data Consistency:</strong> Measurement methods consistent across 160-year period</li>
+    <li><strong>Visual Validation:</strong> Manual verification of interpolation results against source data</li>
+  </ul>
+
+  <!-- Results -->
+  <h2>Results (Findings)</h2>
+  <ul>
+    <li>Successfully generated 17 temporally sequential temperature surfaces</li>
+    <li>Revealed persistent north–south temperature gradient across all time periods</li>
+    <li>Detected northward shift of warmer zones over the decades</li>
+    <li>Identified progressive warming trend consistent with observed climate change patterns</li>
+    <li>Produced compelling animated visualization bridging scientific analysis and visual storytelling</li>
+  </ul>
+
+  <!-- Conclusion -->
+  <h2>Conclusion</h2>
+  <p>
+    The spatiotemporal animation successfully visualized 160 years of September temperature patterns across China, 
+    clearly demonstrating both spatial gradients and temporal warming trends. The methodology combining kriging interpolation 
+    with standardized cartography and animation techniques proved effective for communicating complex climate data through 
+    intuitive visual storytelling.
+  </p>
+
+  <!-- Implications / Next Steps -->
+  <h2>Implications / Next Steps</h2>
+  <ul>
+    <li><strong>Climate Communication:</strong> Enhanced tools for communicating climate change impacts to diverse audiences</li>
+    <li><strong>Educational Applications:</strong> Valuable resource for climate science education and public awareness</li>
+    <li><strong>Methodological Expansion:</strong> Apply similar techniques to other climate variables and geographic regions</li>
+    <li><strong>Higher Temporal Resolution:</strong> Explore monthly or seasonal patterns beyond September data</li>
+    <li><strong>Interactive Development:</strong> Create web-based interactive versions for broader accessibility</li>
+  </ul>
+
+  <!-- Buttons -->
+  <div class="btns">
+    <a class="btn" href="GIS Images/China September-1854-2014.gif" target="_blank" rel="noopener noreferrer">🎬 View Animation</a>
+    
+  </div>
+
+  <!-- Details grid -->
+  <div class="project-description">
+    <div class="info-grid">
+      <div class="info-block">
+        <h3>Workflow</h3>
+        <ul>
+          <li>Data collection and temporal organization</li>
+          <li>Coordinate system standardization</li>
+          <li>Ordinary Kriging interpolation</li>
+          <li>Cartographic standardization</li>
+          <li>High-resolution export</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>Key Parameters</h3>
+        <ul>
+          <li>Time period: 1854-2014 (160 years)</li>
+          <li>Temporal resolution: Decadal intervals</li>
+          <li>Symbology range: 273 K – 308 K</li>
+          <li>Output format: 300 DPI PNG sequences</li>
+          <li>Animation: 1 second per frame with fades</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>Tools &amp; Techniques</h3>
+        <ul>
+          <li>ArcGIS Pro: Spatial Analyst Toolbox</li>
+          <li>Ordinary Kriging Interpolation</li>
+          <li>Python Automation</li>
+          <li>Temporal Visualization</li>
+          <li>Cartographic Standardization</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>Deliverables</h3>
+        <ul>
+          <li>17 interpolated temperature surfaces</li>
+          <li>Standardized cartographic series</li>
+          <li>Animated temperature visualization</li>
+          <li>Temporal trend analysis</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
     </div>
   </div>
 
