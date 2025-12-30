@@ -1,0 +1,1500 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GeoVisualization Gallery</title>
+  <style>
+    :root{
+      --bg:#0c0c10; --fg:#ececf0; --muted:#b4b9c3;
+      --glass:rgba(255,255,255,.07); --glass2:rgba(255,255,255,.04);
+      --stroke:rgba(255,255,255,0); --strokeHover:rgba(255,255,255,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--fg);
+      font:500 15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background:
+        radial-gradient(1000px 600px at 10% -20%, rgba(120,200,255,.08), transparent 60%),
+        radial-gradient(800px 500px at 100% 10%, rgba(255,160,120,.08), transparent 60%),
+        var(--bg);
+    }
+    .wrap{
+        height:100vh;
+        width:100vw;
+        display:grid;
+        grid-template-columns: 420px 1fr;
+        gap:16px;
+        padding:16px;
+        }
+
+    @media (max-width: 980px){
+      .wrap{grid-template-columns:1fr; height:auto}
+      .detail{min-height:70vh}
+    }
+
+    .glass{
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      box-shadow:0 8px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);
+      backdrop-filter: blur(14px) saturate(120%);
+      -webkit-backdrop-filter: blur(14px) saturate(120%);
+      transition:border-color .2s ease, transform .15s ease;
+      overflow:hidden;
+    }
+    .glass:hover{border-color:var(--strokeHover)}
+    .sidebar{display:flex; flex-direction:column; min-height:0}
+    .head{padding:14px 14px 10px}
+    .head h1{margin:0; font-size:18px; line-height:1.2}
+    .head p{margin:6px 0 0; color:var(--muted); font-size:12.5px}
+    .search{padding:0 14px 12px}
+    .search input{
+      width:100%; padding:10px 12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04); color:var(--fg);
+      outline:none;
+    }
+    .list{
+  padding:0 12px 12px;
+  overflow:auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+   .card{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+
+  padding:12px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    border-color .2s ease,
+    background .2s ease;
+}
+
+.card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(255,255,255,.30);
+  background:rgba(255,255,255,.06);
+}
+
+.card.active{
+  border-color:rgba(120,200,255,.60);
+  background:rgba(120,200,255,.10);
+}
+
+    .thumb{
+  width:100%;
+  height:140px;          /* 👈 controls thumbnail size */
+  object-fit:fill;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+}
+
+.t{
+  margin:2px 0 0;
+  font-weight:800;
+  font-size:14.5px;
+  line-height:1.3;
+}
+
+.d{
+  margin:2px 0 0;
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.4;
+}
+
+
+    .detail{display:flex; flex-direction:column; min-height:0; overflow:hidden}
+    .detailTop{
+  padding:16px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+}
+    .detailTop h2{margin:0; font-size:20px; line-height:1.25}
+    .detailTop .leftHead{min-width:0;}
+    .meta{margin:6px 0 0; color:var(--muted); font-size:12.5px}
+    .actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:0;              /* remove top margin */
+  justify-content:flex-end;  /* right align */
+}
+    .btn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(120,200,255,.18), rgba(120,200,255,.05));
+      color:#fff; text-decoration:none; font-weight:800; font-size:13px;
+    }
+    .btn.secondary{background:linear-gradient(180deg, rgba(255,160,120,.18), rgba(255,160,120,.06))}
+    .viewerWrap{
+        display:block;          /* remove grid split */
+        overflow:auto;          /* <-- ONE scroll for map + text */
+        min-height:0;
+        height:100%;
+        }
+    .viewer{
+        width:100%;
+        height:78vh;            /* <-- controls the visible map height */
+        background:rgba(0,0,0,.18);
+        border-bottom:1px solid rgba(255,255,255,.08);
+        overflow:hidden;        /* keeps it from expanding */
+        }
+
+    .viewer iframe, .viewer img{
+        width:100%;
+        height:100%;            /* <-- fit inside the fixed viewer height */
+        display:block;
+        border:0;
+        object-fit:fill;     /* keeps full map visible (no crop) */
+        }
+    
+    .desc{
+      padding:14px 16px;
+      color:var(--fg);
+      min-height:0;          /* <-- important for grid scrolling */
+    }
+    .desc p{margin:0 0 10px}
+    .desc ul{margin:0; padding-left:18px}
+    .desc li{margin:0 0 4px}
+    .pillRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      color:var(--fg);
+    }
+    .read-report-btn{
+  position:absolute;
+  right:18px;
+  bottom:18px;
+  z-index:20;
+
+  padding:10px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.18);
+  background:linear-gradient(
+    180deg,
+    rgba(120,200,255,.22),
+    rgba(120,200,255,.08)
+  );
+  color:#fff;
+  font-weight:800;
+  font-size:13px;
+  cursor:pointer;
+
+  box-shadow:0 8px 22px rgba(0,0,0,.45);
+}
+
+.read-report-btn:hover{
+  border-color:rgba(255,255,255,.35);
+}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- LEFT: thumbnail list -->
+    <aside class="glass sidebar" aria-label="GeoVisualization projects">
+      <div class="head">
+        <h1>GeoVisualization Gallery</h1>
+        <p>Click a map to preview it (PDF/image/GIF) on the right.</p>
+      </div>
+      <div class="search">
+        <input id="q" type="search" placeholder="Search maps (e.g., viewshed, China, NDVI)..." />
+      </div>
+      <div id="list" class="list" role="listbox" aria-label="Project list"></div>
+    </aside>
+
+    <!-- RIGHT: large viewer + details -->
+    <main class="glass detail" aria-label="Selected project">
+      <div class="detailTop">
+  <div class="leftHead">
+    <h2 id="title">Select a map</h2>
+    <div id="meta" class="meta">Your PDF/image/GIF will appear here.</div>
+  </div>
+
+  <div class="actions">
+    <a id="openPrimary" class="btn" href="#" target="_blank" rel="noopener noreferrer">🗺️ Open (Primary)</a>
+    <a id="openReport" class="btn secondary" href="#" target="_blank" rel="noopener noreferrer">📄 Open Report</a>
+    <a id="openFolder" class="btn secondary" href="#" target="_blank" rel="noopener noreferrer">📂 OneDrive</a>
+  </div>
+</div>
+
+
+      <div class="viewerWrap">
+        <div id="viewer" class="viewer" aria-label="Map viewer"></div>
+
+        <section class="desc" aria-label="Description and report">
+        <p id="summary"></p>
+        <ul id="bullets"></ul>
+        <div id="pills" class="pillRow"></div>
+
+        <details id="fullReportWrap" style="margin-top:12px">
+            <summary><strong>Read full report</strong> (Map 2)</summary>
+            <div id="fullReport" style="margin-top:10px"></div>
+        </details>
+        </section>
+        <button id="readReportBtn" class="read-report-btn" aria-label="Read full report">
+  📄 Read full report
+</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ======= EDIT THESE ITEMS ONLY =======
+    // type: "pdf" | "image" | "gif"
+    // primary: shown in right viewer; can be PDF, image, or gif
+    const PROJECTS = [
+      {
+        id: "china-sept-temp",
+        title: "Spatial & Temporal Evolution of September Air Temperature — China (1854–2014)",
+        subtitle: "Animated GeoVisualization · Temporal evolution · Interpolated climate surfaces",
+        type: "gif",
+        primary: "China September-1854-2014 ezgif optimized.gif",
+        report: "Reports/China_Temp_Report.pdf",
+        folder: "https://your-onedrive-link.example",
+        summary: "Animated map showing long-term September air temperature patterns across China from 1854 to 2014.",
+        bullets: [
+          "Focus: spatiotemporal patterns and regional variability",
+          "Output: animated GIF + final cartographic layout",
+          "Purpose: communicate long-term change clearly"
+        ],
+        tags: ["GIF", "Temporal", "Climate", "ArcGIS Pro"],
+        thumb: "China September-1854-2014 ezgif optimized.gif",
+        fullReportHTML: `
+        <h3>Spatial &amp; Temporal Evolution of September Air Temperature — China (1854–2014)</h3>
+        <p>
+          This project visualizes long-term September air temperature patterns across China using an
+          interpolated climate surface for each year, compiled into an animated map to highlight
+          spatiotemporal variability from <strong>1854 to 2014</strong>.
+        </p>
+
+        <h4>Objective</h4>
+        <p>
+          Create a clear, time-enabled visualization that communicates how September air temperature
+          patterns shift across China over ~160 years, emphasizing broad regional gradients and persistent
+          hot/cold zones rather than year-to-year noise.
+        </p>
+
+        <h4>Data &amp; Variable</h4>
+        <ul>
+          <li><strong>Variable:</strong> September air temperature (<em>K</em>)</li>
+          <li><strong>Spatial extent:</strong> China and neighboring context (for geographic reference)</li>
+          <li><strong>Temporal extent:</strong> 1854–2014 (annual September surfaces)</li>
+        </ul>
+
+        <h4>Method Overview</h4>
+        <ul>
+          <li><strong>Interpolation:</strong> Kriging-based continuous surface (climate field interpolation)</li>
+          <li><strong>Surface preparation:</strong> resampling to a consistent raster grid for animation consistency</li>
+          <li><strong>Cartography:</strong> fixed class breaks and legend styling across frames to ensure comparability</li>
+          <li><strong>Output:</strong> animated GIF + final layout export for portfolio presentation</li>
+        </ul>
+
+        <h4>How to Read the Animation</h4>
+        <ul>
+          <li>Colors represent temperature classes (Kelvin) using a consistent ramp across time.</li>
+          <li>Watch for stable gradients (north–south) versus shifting anomalies across years.</li>
+          <li>Focus on broad regional patterns (e.g., northern interior vs. southern/coastal regions).</li>
+        </ul>
+
+        <h4>Key Observations</h4>
+        <ul>
+          <li><strong>Regional gradients:</strong> a persistent contrast between cooler northern/high-elevation zones and warmer southern/lowland regions.</li>
+          <li><strong>Spatial coherence:</strong> temperature zones tend to form continuous bands, reflecting spatial autocorrelation captured by Kriging.</li>
+          <li><strong>Long-term variability:</strong> inter-annual shifts appear as expanding/contracting temperature classes rather than random pixel noise.</li>
+        </ul>
+
+        <h4>Deliverables</h4>
+        <ul>
+          <li><strong>Animated map (GIF):</strong> temporal evolution across 1854–2014</li>
+          <li><strong>Report (PDF):</strong> workflow notes, map design decisions, and interpretation</li>
+        </ul>
+
+        <div style="margin-top:12px">
+          <a class="btn" href="China September-1854-2014 ezgif optimized.gif" target="_blank" rel="noopener noreferrer">🎞️ Open Animation (GIF)</a>
+          <a class="btn secondary" href="Reports/China_Temp_Report.pdf" target="_blank" rel="noopener noreferrer">📄 Open Report (PDF)</a>
+        </div>
+      `
+      },
+      {
+        id: "bivariate-hispanic-farms-1997",
+        title: "Bivariate Choropleth Map of Hispanic Population and Number of Farms (U.S. Counties, 1997)",
+        subtitle: "GeoVisualization · 3×3 quantile bivariate choropleth · County-level comparison",
+        type: "image",
+        primary: "Bivariate_Choropleth_Map_Hispanic_Popn_No_of_Farms_in_U.S_Counties_(1997).jpg",
+        report: "Reports/Map2_Bivariate_Hispanic_Farms_1997.pdf",
+        folder: "https://your-onedrive-link.example",
+        summary: "A bivariate choropleth showing how Hispanic population and farm counts overlap across U.S. counties in 1997.",
+        bullets: [
+            "Southwest/West Coast: high Hispanic population with varying agricultural intensity",
+            "Midwest/Great Plains: high farm density with low Hispanic population",
+            "Urban counties: high Hispanic population but fewer farms",
+            "Method: 3×3 quantile classification for both variables"
+        ],
+        tags: ["Bivariate", "Choropleth", "Demographics", "Agriculture"],
+        thumb: "Bivariate_Choropleth_Map_Hispanic_Popn_No_of_Farms_in_U.S_Counties_(1997).jpg",
+
+        fullReportHTML: `
+            <h3>Map 2 Report — Bivariate Choropleth: Hispanic Population and Number of Farms (1997)</h3>
+
+            <h4>Map Type</h4>
+            <p>
+            This is a <strong>bivariate choropleth map</strong>, which simultaneously represents two variables across the same
+            geographic units (counties). In this case:
+            </p>
+            <ul>
+            <li><strong>Hispanic Population (1997)</strong> — shown in shades of pink/purple.</li>
+            <li><strong>Number of Farms (1997)</strong> — shown in shades of blue.</li>
+            </ul>
+            <p>
+            By combining both variables using a <strong>3×3 quantile classification</strong>, the final colors represent
+            low-to-high pairings of demographic intensity and agricultural activity.
+            </p>
+
+            <h4>Findings</h4>
+            <ol>
+            <li><strong>Regional Patterns</strong>
+                <ul>
+                <li><strong>Southwest</strong> (Texas, New Mexico, Arizona, California): high Hispanic populations with varying farm densities; counties often appear in darker magenta/purple blends.</li>
+                <li><strong>Midwest &amp; Great Plains</strong> (Iowa, Nebraska, Kansas, Dakotas): high farm counts but relatively low Hispanic populations; many counties trend toward deeper blues.</li>
+                <li><strong>Southeast</strong> (Mississippi, Alabama, Georgia, Carolinas): moderate farm counts with low Hispanic populations; lighter mixed shades are common.</li>
+                </ul>
+            </li>
+            <li><strong>Urban vs. Rural Contrast</strong>
+                <ul>
+                <li><strong>Urban counties</strong> (e.g., Los Angeles, Miami, Houston) show high Hispanic populations but fewer farms (strong pink/magenta).</li>
+                <li><strong>Rural agricultural counties</strong> (especially Midwest belts) show high farm numbers but lower Hispanic representation (deeper blue).</li>
+                </ul>
+            </li>
+            <li><strong>City vs. Non-City Counties</strong>
+                <ul>
+                <li>City counties tend to have larger Hispanic populations and fewer farms.</li>
+                <li>Non-city counties tend to be farm-intensive with lower Hispanic presence.</li>
+                </ul>
+            </li>
+            <li><strong>Large vs. Small Hispanic Population Counties</strong>
+                <ul>
+                <li>Large Hispanic population counties (California’s Central Valley, South Texas, parts of Florida) show mixed agricultural intensity.</li>
+                <li>Small Hispanic population counties (Midwest and interior Northeast) tend to have strong farming activity with limited Hispanic presence in 1997.</li>
+                </ul>
+            </li>
+            </ol>
+
+            <h4>Classification Method</h4>
+            <p>
+            The map uses <strong>quantile classification</strong> in a <strong>3×3 grid</strong>. Quantiles ensure an approximately
+            equal number of counties in each class for both variables. This balances representation in bivariate mapping, but can
+            slightly exaggerate differences where values cluster tightly.
+            </p>
+
+            <h4>Conclusion</h4>
+            <p>
+            The bivariate analysis highlights distinct regional overlap between demographic distribution and agricultural activity:
+            </p>
+            <ul>
+            <li><strong>Southwest &amp; West Coast:</strong> Hispanic communities often coincide with agricultural hubs.</li>
+            <li><strong>Midwest:</strong> farming dominates but Hispanic presence was low in 1997.</li>
+            <li><strong>Urban areas:</strong> high Hispanic populations but fewer farms.</li>
+            </ul>
+            <p>
+            Overall, this visualization provides a nuanced view of how demographic and agricultural patterns interacted across U.S.
+            counties in the late 20th century.
+            </p>
+        `
+        },
+      {
+        id: "tx-hispanic-renter-bivar",
+        title: "Bivariate Map: Hispanic Population & Renter Occupancy Rate — Texas Cities",
+        subtitle: "GeoVisualization · Choropleth (counties) + Proportional Symbols (cities) · Quantiles (5 classes)",
+        type: "image",
+        primary: "Bivariate Map Hispanic Population_Renter Occupancy Rate_Texas Cities.jpg",            // <-- change to your map image
+        report: "Reports/TX_Hispanic_Renter_Bivariate_Report.pdf",        // <-- change if you have a PDF
+        folder: "https://your-onedrive-link.example",                     // <-- optional
+        summary: "Combined county-level renter occupancy (choropleth) with city-level Hispanic percentage (scaled circles) to examine spatial relationships across Texas.",
+        bullets: [
+          "South Texas border cities (McAllen, Laredo, Brownsville, El Paso) align with higher renter occupancy and larger Hispanic % symbols",
+          "Northern/western cities (Amarillo, Lubbock, Abilene) show lower renter rates and smaller Hispanic % symbols",
+          "Major metros (Houston, Dallas, San Antonio) show high Hispanic % and high renter occupancy consistent with urban housing demand"
+        ],
+        tags: ["Texas", "Bivariate", "Choropleth", "Proportional Symbols", "Quantiles"],
+        thumb: "Bivariate Map Hispanic Population_Renter Occupancy Rate_Texas Cities.jpg",        // <-- change to your thumbnail
+
+        fullReportHTML: `
+          <h3>Bivariate Map — Hispanic Population (%) and Renter Occupancy Rate (Texas)</h3>
+
+          <h4>Map Design</h4>
+          <ul>
+            <li><strong>Choropleth (counties):</strong> Renter Occupancy Rate, classified using <strong>Quantiles (5 classes)</strong>.</li>
+            <li><strong>Proportional Symbols (cities):</strong> <strong>Pct_Hispanic</strong> displayed as scaled circles (raw percentages).</li>
+          </ul>
+          <p>
+            This design supports simultaneous interpretation of a county-level housing characteristic (renting) and city-level demographic concentration (Hispanic %),
+            helping reveal where both variables co-occur spatially.
+          </p>
+
+          <h4>Relationship &amp; Spatial Pattern</h4>
+          <ul>
+            <li>
+              <strong>South Texas border region</strong> (e.g., McAllen, Laredo, Brownsville, El Paso) tends to combine
+              <strong>large Hispanic population symbols</strong> with <strong>higher renter occupancy</strong> (darker choropleth classes).
+            </li>
+            <li>
+              <strong>Northern and western Texas</strong> cities (e.g., Amarillo, Lubbock, Abilene) commonly show
+              <strong>smaller Hispanic symbols</strong> and <strong>lower renter occupancy</strong> (lighter choropleth classes).
+            </li>
+            <li>
+              <strong>Large metropolitan cores</strong> (Houston, Dallas, San Antonio) show both <strong>high Hispanic percentages</strong> and
+              <strong>high renter rates</strong>, consistent with urban housing demand and immigrant community settlement patterns.
+            </li>
+          </ul>
+
+          <h4>City vs. Non-City Areas</h4>
+          <ul>
+            <li><strong>City areas</strong> generally exhibit <strong>higher renter occupancy</strong> than rural counties, reflecting urban rental markets.</li>
+            <li><strong>Non-city / rural areas</strong> tend to show <strong>lower Hispanic percentages</strong> and <strong>lower renter occupancy</strong>, often dominated by owner-occupied housing.</li>
+          </ul>
+
+          <h4>Small vs. Large Hispanic Population Cities</h4>
+          <ul>
+            <li><strong>Smaller Hispanic population</strong> cities (often in North Texas suburbs) generally align with <strong>lower renter rates</strong>.</li>
+            <li><strong>Larger Hispanic population</strong> cities (South Texas border region and major urban cores) show a stronger co-occurrence with <strong>higher renter occupancy</strong>.</li>
+          </ul>
+
+          <h4>Classification &amp; Symbology Choices</h4>
+          <ul>
+            <li>
+              <strong>Choropleth (Renter Occupancy Rate):</strong> Quantiles (5 classes) were selected to ensure an even distribution of counties across classes.
+              This is helpful for demographic variables that are often skewed between urban and rural areas and improves regional comparison.
+            </li>
+            <li>
+              <strong>Proportional Symbols (Pct_Hispanic):</strong> Raw percentages were preserved and mapped with circle size to avoid distortion from classification.
+              A clear size range (e.g., <strong>4–30 pt</strong>) supports readability across the state.
+            </li>
+          </ul>
+
+          <h4>Summary</h4>
+          <p>
+            Overall, the map suggests a positive spatial association in Texas where cities with higher Hispanic population percentages frequently coincide with counties
+            exhibiting higher renter occupancy—especially in the South Texas border region and major metropolitan areas—while northern/western cities and rural counties
+            generally show lower values for both.
+          </p>
+        `
+      },
+{
+  id: "mo-elevation-kriging-2010",
+  title: "Interpolated Elevation Mapping of Missouri (2010) — Kriging Surface & Contours",
+  subtitle: "GeoVisualization · Isometric (Isarithmic) Map · Kriging interpolation · Continuous elevation surface",
+  type: "image",
+  primary: "Kriging_Contour_Map.jpg",              // <-- change to your map image filename/path
+  report: "Reports/MO_Elevation_Kriging_2010_Report.pdf",          // <-- optional (remove if none)
+  folder: "https://your-onedrive-link.example",                    // <-- optional
+  summary: "Kriging-based elevation interpolation from spring point data, visualized as an isometric (isarithmic) surface with contours across Missouri.",
+  bullets: [
+    "Map type: isometric/isarithmic (contours connect equal elevation values)",
+    "Method: Kriging models spatial autocorrelation to produce a smooth continuous surface",
+    "Output: regional elevation pattern + natural-looking contour transitions"
+  ],
+  tags: ["Missouri", "Elevation", "Kriging", "Isarithmic", "Contours"],
+  thumb: "Kriging_Contour_Map.jpg",          // <-- change to your thumbnail
+
+  fullReportHTML: `
+    <h3>Interpolated Elevation Mapping of Missouri (2010)</h3>
+
+    <h4>Is this an Isometric or Isopleth Map? Why?</h4>
+    <p>
+      The map generated in this study is an <strong>isometric (isarithmic) map</strong>.
+      This is because the elevation surface was created using <strong>Kriging interpolation</strong>, which represents a
+      <strong>continuous surface of absolute elevation values</strong> derived from point-based spring elevation data.
+      The contour lines connect locations of <strong>equal elevation</strong>, which are <strong>isarithms</strong>.
+    </p>
+    <p>
+      In contrast, <strong>isopleth maps</strong> are typically used for <strong>ratio or density variables</strong>
+      (e.g., population density, yield per hectare). Since this project maps <strong>absolute elevation</strong>,
+      the correct classification is <strong>isometric/isarithmic</strong>.
+    </p>
+
+    <h4>Findings Using Kriging (Geostatistical Interpolation)</h4>
+    <ul>
+      <li>
+        <strong>Kriging</strong> is a geostatistical interpolation method that considers both
+        <strong>distance</strong> and <strong>spatial autocorrelation</strong> (statistical similarity across space).
+      </li>
+      <li>
+        The Kriging elevation surface produces a <strong>smoother, more continuous</strong> representation of Missouri’s
+        terrain, capturing <strong>regional topographic trends</strong> rather than isolated local artifacts.
+      </li>
+      <li>
+        The derived <strong>contour map</strong> shows <strong>gradual, natural-looking transitions</strong> between elevation
+        zones, which visually aligns with real-world terrain patterns.
+      </li>
+      <li>
+        By modeling the underlying spatial structure of the elevation data, Kriging provides a more reliable surface for
+        state-scale mapping and interpretation.
+      </li>
+    </ul>
+
+    <h4>Conclusion</h4>
+    <p>
+      Kriging successfully generated a realistic elevation surface for Missouri by accounting for spatial autocorrelation
+      and broader regional trends in spring elevation measurements. The resulting <strong>isometric (isarithmic) map</strong>
+      offers a clear visualization of statewide elevation patterns, with contours that better reflect natural topography.
+      Overall, <strong>Kriging is well-suited for regional-scale terrain interpolation and cartographic presentation</strong>.
+    </p>
+  `
+},
+{
+  id: "cartogram-white-population-us",
+  title: "Density-Equalizing Cartogram of White Population — U.S. States (2010)",
+  subtitle: "Cartogram · Gastner–Newman method · Population-scaled state areas",
+  type: "image",
+  primary: "Gastner-Newman Cartogram.jpg",
+  report: "Reports/Cartogram_White_Population_Report.pdf",
+  folder: "https://your-onedrive-link.example",
+  summary: "A density-equalizing cartogram showing the distribution of White population across U.S. states, where state areas are scaled by population rather than land size.",
+  bullets: [
+    "Method: Gastner–Newman diffusion-based cartogram",
+    "Area represents White population, not geographic size",
+    "Reference map included for geographic comparison",
+    "Topology preserved while state shapes are distorted"
+  ],
+  tags: ["Cartogram", "Demographics", "Population", "Gastner–Newman"],
+  thumb: "Gastner-Newman Cartogram.jpg",
+
+  fullReportHTML: `
+    <h3>Density-Equalizing Cartogram of White Population by U.S. States (2010)</h3>
+
+    <h4>Project Overview</h4>
+    <p>
+      This project visualizes the spatial distribution of the <strong>White population</strong> across U.S. states
+      using a <strong>density-equalizing cartogram</strong>. Instead of representing true land area, each state’s
+      area is resized to be proportional to its White population, revealing demographic dominance more clearly
+      than a conventional map.
+    </p>
+
+    <h4>Data &amp; Method</h4>
+    <ul>
+      <li><strong>Dataset:</strong> StateCart (WHITE population attribute)</li>
+      <li><strong>Tool:</strong> go-cart.io online cartogram generator</li>
+      <li><strong>Input:</strong> Three-column CSV (State name, total population, White population)</li>
+      <li>
+        <strong>Algorithm:</strong> Gastner–Newman diffusion method, which preserves neighborhood relationships
+        while distorting shapes to equalize population density.
+      </li>
+    </ul>
+
+    <h4>Outputs</h4>
+    <ul>
+      <li><strong>SVG:</strong> high-resolution cartogram export</li>
+      <li><strong>GeoJSON:</strong> GIS-ready output for ArcGIS Pro</li>
+      <li><strong>PNG:</strong> final layout image for reporting and portfolio display</li>
+    </ul>
+
+    <h4>How to Read the Map</h4>
+    <ul>
+      <li><strong>Reference panel:</strong> true state shapes for geographic context</li>
+      <li><strong>Cartogram panel:</strong> distorted shapes where <strong>area = White population</strong></li>
+      <li>State adjacency is preserved, but outlines are intentionally reshaped.</li>
+    </ul>
+
+    <h4>Key Observations</h4>
+    <ul>
+      <li><strong>Expanded states:</strong> California, Texas, Florida, and New York increase significantly due to large White populations.</li>
+      <li><strong>Shrunken states:</strong> Alaska, Wyoming, Vermont, and North Dakota contract sharply.</li>
+      <li><strong>Northeast distortion:</strong> small, densely populated states become compact and less recognizable.</li>
+      <li><strong>Alaska effect:</strong> appears much smaller despite large land area because population values drive size.</li>
+      <li><strong>Hawaii:</strong> remains very small, reflecting its relatively low population.</li>
+    </ul>
+
+    <h4>Effectiveness</h4>
+    <p>
+      This cartogram is highly effective for communicating <strong>relative population magnitude</strong> and
+      highlighting demographic imbalance across the U.S. However, because shape distortion reduces geographic
+      recognizability, the map is best interpreted alongside a <strong>reference map</strong> or traditional choropleth.
+    </p>
+  `
+},
+
+{
+  id: "cartogram-flow-based-contiguous-white-us",
+  title: "Flow-Based Contiguous Cartogram of White Population — U.S. States",
+  subtitle: "Cartogram · ArcGIS Pro Generate Contiguous Cartogram · Flow-Based (Gastner, 2018)",
+  type: "image",
+  primary: "Flow-Based Contiguous Cartogram of White Population in the United States.jpg",   // <-- change to your map image path
+  report: "Reports/Cartogram2_Flow_Based_Contiguous_White_Pop_Report.pdf", // <-- optional (remove if none)
+  folder: "https://your-onedrive-link.example",                            // <-- optional
+  summary: "A contiguous, flow-based cartogram created in ArcGIS Pro where state areas are resized in proportion to White population while preserving adjacency and improving recognizability.",
+  bullets: [
+    "Tool: ArcGIS Pro → Cartography Tools → Generate Contiguous Cartogram",
+    "Method: Flow-Based (Gastner, 2018) to preserve contiguity (no gaps) and neighborhood structure",
+    "Symbolized with a sequential ramp using 5 classes for readable population comparison",
+    "More recognizable outlines than a density-equalizing diffusion cartogram"
+  ],
+  tags: ["Cartogram", "ArcGIS Pro", "Flow-Based", "Contiguous", "Demographics"],
+  thumb: "Flow-Based Contiguous Cartogram of White Population in the United States.jpg",           // <-- change to your thumbnail
+
+  fullReportHTML: `
+    <h3>Flow-Based Contiguous Cartogram of White Population in the United States</h3>
+
+    <h4>Project Overview</h4>
+    <p>
+      This cartogram was created in <strong>ArcGIS Pro</strong> using a <strong>Flow-Based contiguous</strong> approach to
+      resize state polygons so that <strong>area represents White population</strong>. The method preserves contiguity
+      (neighbors remain neighbors and no gaps are introduced) while maintaining more recognizable state outlines than
+      diffusion-style cartograms.
+    </p>
+
+    <h4>Data &amp; Method</h4>
+    <ul>
+      <li><strong>Dataset:</strong> StateCart (WHITE population attribute)</li>
+      <li><strong>Software:</strong> ArcGIS Pro</li>
+      <li>
+        <strong>Tool path:</strong> Analysis → Tools → Cartography Tools → <strong>Generate Contiguous Cartogram</strong>
+      </li>
+      <li><strong>Method:</strong> <strong>Flow-Based</strong> (Gastner, 2018)</li>
+      <li>
+        <strong>Design choice:</strong> 5-class sequential symbology for clear comparison across states and regions
+      </li>
+    </ul>
+
+    <h4>Results</h4>
+    <p>
+      The output distorts state boundaries in proportion to White population. Large-population states expand (e.g.,
+      California, Texas, Florida, New York), while smaller-population states shrink (e.g., Alaska, Vermont, Wyoming).
+      The cartogram retains visible internal boundaries, improving interpretability in dense regions such as the Northeast.
+    </p>
+
+    <h4>Key Observations</h4>
+    <ul>
+      <li>
+        <strong>Dominant states:</strong> California, Texas, Florida, New York (and other high-population states)
+        occupy the greatest visual space, highlighting where most White residents are concentrated.
+      </li>
+      <li>
+        <strong>Reduced states:</strong> Alaska, Vermont, Wyoming, North Dakota shrink sharply and can become harder to
+        recognize due to their comparatively low population.
+      </li>
+      <li>
+        <strong>Northeast compression:</strong> the corridor tightens, but boundaries remain readable, making it easier to
+        distinguish states than in more extreme diffusion cartograms.
+      </li>
+      <li>
+        <strong>Recognizability:</strong> distortions are noticeable, but familiar shapes (e.g., Texas and Florida) remain
+        partially recognizable, improving map readability for general audiences.
+      </li>
+    </ul>
+
+    <h4>Effectiveness</h4>
+    <p>
+      This Flow-Based contiguous cartogram balances <strong>statistical accuracy</strong> with <strong>geographic
+      recognizability</strong>. It emphasizes the uneven distribution of White population while keeping state shapes
+      more interpretable than diffusion-based density-equalizing cartograms, making it especially useful for broader,
+      non-technical audiences.
+    </p>
+  `
+},
+{
+  id: "cartogram-prism-extruded-white-us",
+  title: "Prism Cartogram of White Population — U.S. States (3D Extrusion)",
+  subtitle: "3D GeoVisualization · ArcGIS Pro Local Scene · Extrusion by WHITE population",
+  type: "image",
+  primary: "Prism Cartogram of White Population by U.S. States (Extruded 3D Scene).jpg",              // <-- change to your image path
+  report: "Reports/Cartogram3_Prism_Extruded_White_Pop_Report.pdf",      // <-- optional
+  folder: "https://your-onedrive-link.example",                          // <-- optional
+  summary: "A 3D prism (extruded) cartogram where state footprints remain geographically accurate while prism height is extruded by White population to emphasize magnitude differences.",
+  bullets: [
+    "ArcGIS Pro 3D Local Scene with polygon extrusion symbology",
+    "Base footprint stays true; height encodes WHITE population totals",
+    "No multiplier applied because raw values already produce strong height separation",
+    "Oblique 3D perspective used to highlight skyline-style population dominance"
+  ],
+  tags: ["3D", "Prism Map", "Extrusion", "Cartogram", "Demographics", "ArcGIS Pro"],
+  thumb: "Prism Cartogram of White Population by U.S. States (Extruded 3D Scene).jpg",                // <-- change to your thumbnail
+
+  fullReportHTML: `
+    <h3>Prism Cartogram of White Population by U.S. States (Extruded 3D Scene)</h3>
+
+    <h4>Project Overview</h4>
+    <p>
+      This project presents a <strong>3D prism (extruded) cartogram</strong> of the United States where each state’s
+      <strong>geographic footprint remains accurate</strong>, but its <strong>height is extruded</strong> according to the
+      <strong>WHITE population</strong>. The result is a skyline-style visualization that emphasizes magnitude differences
+      using vertical dimension rather than area distortion.
+    </p>
+
+    <h4>Data &amp; Method</h4>
+    <ul>
+      <li><strong>Dataset:</strong> StateCart (WHITE population attribute)</li>
+      <li><strong>Software:</strong> ArcGIS Pro</li>
+      <li><strong>Scene type:</strong> <strong>3D Local Scene</strong></li>
+      <li>
+        <strong>Symbology:</strong> Feature Layer → <strong>Extrusion</strong> → Base Height, using <strong>WHITE</strong>
+        as the controlling field
+      </li>
+      <li>
+        <strong>Scaling:</strong> No multiplier applied (raw values in the millions already produced strong extrusion height)
+      </li>
+      <li>
+        <strong>Design:</strong> Sequential color ramp + oblique camera perspective to highlight prism height variation
+      </li>
+    </ul>
+
+    <h4>Results</h4>
+    <p>
+      The final 3D scene shows the U.S. as a surface of vertical prisms. Taller prisms represent states with larger White
+      populations. California, Texas, Florida, and New York rise dramatically above the rest, while states such as Vermont,
+      Wyoming, Alaska, and North Dakota appear much shorter.
+    </p>
+
+    <h4>Key Observations</h4>
+    <ul>
+      <li><strong>Dominant prisms:</strong> California, Texas, Florida, and New York create the tallest skyline features.</li>
+      <li><strong>Small prisms:</strong> Vermont, Wyoming, Alaska, and North Dakota remain short, reflecting lower totals.</li>
+      <li>
+        <strong>Extreme contrast:</strong> using raw values creates dramatic height differences that strongly emphasize
+        population disparities.
+      </li>
+      <li>
+        <strong>Occlusion:</strong> some smaller states become hard to see when visually overshadowed by taller neighbors,
+        depending on viewing angle.
+      </li>
+      <li>
+        <strong>Tradeoff:</strong> the method communicates magnitude very clearly but can reduce geographic interpretability
+        in dense regions.
+      </li>
+    </ul>
+
+    <h4>Effectiveness</h4>
+    <p>
+      The prism cartogram is highly effective for emphasizing population magnitude through striking vertical differences,
+      making disparities immediately visible. However, because extrusion height is based on raw population values, the scene
+      can become visually overwhelming and smaller states may be lost. For improved balance, a scaled or normalized height
+      expression could preserve impact while improving readability.
+    </p>
+  `
+},
+{
+  id: "cartogram-dorling-white-us",
+  title: "Dorling Cartogram of White Population — U.S. States",
+  subtitle: "Cartogram · GeoDa · Proportional circles with quantile classification",
+  type: "image",
+  primary: "Dorling_White_Population_US.png",        // <-- update path if needed
+  report: "Reports/Cartogram4_Dorling_White_Population_Report.pdf", // optional
+  folder: "https://your-onedrive-link.example",                // optional
+  summary: "A Dorling cartogram created in GeoDa where U.S. states are represented as non-overlapping circles sized and colored by White population to emphasize relative magnitude over geographic shape.",
+  bullets: [
+    "Method: Dorling cartogram (polygon-to-circle transformation)",
+    "Circle size encodes White population totals",
+    "Circle color classified using 5-class quantiles",
+    "Exact state shapes and adjacencies intentionally removed to reduce clutter"
+  ],
+  tags: ["Dorling Cartogram", "GeoDa", "Population", "Demographics"],
+  thumb: "Dorling_White_Population_US.png",       // <-- update thumbnail path
+
+  fullReportHTML: `
+    <h3>Dorling Cartogram of White Population by U.S. States</h3>
+
+    <h4>Project Overview</h4>
+    <p>
+      This project visualizes the distribution of the <strong>White population</strong> across U.S. states using a
+      <strong>Dorling cartogram</strong> generated in <strong>GeoDa</strong>. In this approach, each state polygon is
+      replaced by a <strong>non-overlapping circle</strong> positioned near its geographic location. Circle size and
+      color both encode population magnitude, prioritizing statistical comparison over geographic fidelity.
+    </p>
+
+    <h4>Data &amp; Method</h4>
+    <ul>
+      <li><strong>Dataset:</strong> StateCart (WHITE population attribute)</li>
+      <li><strong>Software:</strong> GeoDa</li>
+      <li>
+        <strong>Cartogram type:</strong> Dorling (polygon-to-circle replacement)
+      </li>
+      <li>
+        <strong>Circle size:</strong> proportional to White population
+      </li>
+      <li>
+        <strong>Circle color:</strong> White population, classified using <strong>quantiles (5 classes)</strong>
+      </li>
+      <li>
+        <strong>Design choice:</strong> exact state shapes and adjacency removed to reduce visual clutter
+      </li>
+    </ul>
+
+    <h4>Results</h4>
+    <p>
+      The Dorling cartogram presents the United States as a field of circles whose size and color correspond to White
+      population totals. Large, dark-red circles represent high-population states, while smaller, lighter-colored
+      circles represent states with lower populations.
+    </p>
+
+    <h4>Key Observations</h4>
+    <ul>
+      <li>
+        <strong>Dominant states:</strong> California, Texas, Florida, and New York stand out clearly with the largest,
+        darkest circles.
+      </li>
+      <li>
+        <strong>Low-population states:</strong> Vermont, Wyoming, North Dakota, and Hawaii appear as small, light-colored
+        circles.
+      </li>
+      <li>
+        <strong>Improved comparison:</strong> relative population differences are easier to compare than in contiguous
+        cartograms, as large land-area states no longer dominate visually.
+      </li>
+      <li>
+        <strong>Geographic distortion:</strong> state boundaries and exact adjacency are lost, though approximate
+        regional positioning remains visible.
+      </li>
+      <li>
+        <strong>Regional patterns:</strong> broad clusters such as the Northeast corridor and Midwest region remain
+        recognizable despite simplification.
+      </li>
+    </ul>
+
+    <h4>Effectiveness</h4>
+    <p>
+      The Dorling cartogram is highly effective for <strong>comparing relative population magnitudes</strong> without the
+      distraction of land area. By removing shape and adjacency constraints, it prevents large but sparsely populated
+      states from overshadowing denser ones. However, because geographic accuracy is sacrificed, this cartogram is best
+      used as a <strong>complement</strong> to traditional maps or contiguous cartograms rather than as a standalone
+      geographic reference.
+    </p>
+  `
+},
+{
+  id: "cartogram-hex-vs-choropleth-white-us",
+  title: "Hexagonal Cartogram vs Traditional Choropleth — White Population (U.S. States)",
+  subtitle: "Cartogram comparison · ArcGIS Pro · Equal-area projections · Same classes & color ramp",
+  type: "image",
+  primary: "Hexagonal Cartogram of White Population by U.S. States .jpg",                 // <-- hex map image
+  report: "Reports/Cartogram5_Hex_vs_Choropleth_White_Pop_Report.pdf",  // optional
+  folder: "https://your-onedrive-link.example",                         // optional
+  summary: "A side-by-side comparison showing how a hexagonal cartogram reduces state-size bias while a traditional choropleth preserves real geography—both mapped with the same classes and color ramp.",
+  bullets: [
+    "Hex cartogram created from ArcGIS Online USA hex template joined with StateCart WHITE attribute",
+    "Traditional choropleth built as a baseline using identical class breaks and sequential ramp",
+    "Mainland projected in USA Contiguous Albers Equal Area Conic; Alaska/Hawaii shown as separate insets",
+    "Comparison highlights how uniform hexagons improve proportional interpretation"
+  ],
+  tags: ["Hex Cartogram", "Choropleth", "Comparison", "ArcGIS Pro", "Demographics"],
+  thumb: "Hexagonal Cartogram of White Population by U.S. States .jpg",            // <-- thumbnail image
+
+  fullReportHTML: `
+    <h3>Hexagonal Cartogram of White Population by U.S. States (Compared with a Traditional Thematic Map)</h3>
+
+    <h4>Project Overview</h4>
+    <p>
+      This project compares two ways of mapping the <strong>WHITE population</strong> across U.S. states:
+      a <strong>hexagonal cartogram</strong> (equal-sized hexagons) and a <strong>traditional choropleth</strong>
+      (true state boundaries). Both maps use the <strong>same attribute, class breaks, and sequential color ramp</strong>
+      so differences are driven by geometry rather than styling.
+    </p>
+
+    <h4>Data &amp; Method</h4>
+    <ul>
+      <li><strong>Dataset:</strong> StateCart (WHITE population attribute)</li>
+      <li>
+        <strong>Hexagonal cartogram:</strong> ArcGIS Online <em>USA Hexagonal Cartogram</em> template joined with StateCart,
+        then symbolized in ArcGIS Pro using <strong>Graduated Colors</strong>.
+      </li>
+      <li>
+        <strong>Traditional choropleth:</strong> Baseline thematic map using the same attribute with the
+        <strong>same class breaks</strong> and <strong>same sequential color ramp</strong>.
+      </li>
+      <li>
+        <strong>Projections:</strong>
+        Mainland USA — <em>USA Contiguous Albers Equal Area Conic</em>;
+        Alaska — <em>Alaska Albers Equal Area Conic</em>;
+        Hawaii — <em>Hawaii Albers Equal Area Conic</em>.
+      </li>
+    </ul>
+
+    <h4>Outputs</h4>
+    <ul>
+      <li><strong>Figure 1:</strong> Traditional choropleth (true state geometry shaded by WHITE population)</li>
+      <li><strong>Figure 2:</strong> Hexagonal cartogram (uniform state hexagons shaded by WHITE population)</li>
+    </ul>
+
+    <h4>Key Observations</h4>
+    <ul>
+      <li>
+        <strong>High-value states stand out in both maps:</strong> California, Texas, Florida, New York, and Pennsylvania
+        appear in the top classes. The hex map shows them as the darkest hexes, while the choropleth places them in the
+        same darkest bins on the true-geometry map.
+      </li>
+      <li>
+        <strong>Low-value states are consistently downplayed:</strong> Alaska, Hawaii, Wyoming, Vermont, North Dakota,
+        South Dakota, and DC appear in the lightest classes. Alaska/Hawaii insets help prevent geographic size bias.
+      </li>
+      <li>
+        <strong>Pattern readability differs by geometry:</strong> the hex cartogram removes irregular state size/shape,
+        so regional gradients and clusters read cleanly (e.g., strong values across CA–TX–FL and the Northeast corridor).
+        The choropleth preserves real geography and provides familiar spatial context.
+      </li>
+    </ul>
+
+    <h4>Effectiveness</h4>
+    <p>
+      The <strong>hexagonal cartogram</strong> is effective for comparing relative intensity without the distraction of
+      large state areas, which can visually overemphasize large but less-populated regions on a choropleth. The
+      <strong>traditional thematic map</strong> remains valuable as a baseline reference because it preserves real
+      geography and supports intuitive location-based interpretation. Together, they complement each other: the choropleth
+      grounds the data in familiar shapes, while the hex map strengthens proportional comparison across states.
+    </p>
+  `
+},
+{
+  id: "distributive-education-dollars-2024",
+  title: "Distribution of Federal Education Tax Dollars — U.S. States (2024)",
+  subtitle: "Distributive Flow Map · ArcGIS Pro · Distributive Flow Lines Tool · Equal-area projection",
+  type: "image",
+  primary: "Distributive_Flow_Education_Dollars_2024.jpg",
+  report: "Reports/Lab3_FlowMaps_Report.pdf",
+  folder: "https://your-onedrive-link.example",
+  summary:
+    "Distributive flow map showing how federal education dollars (2024) converge from Washington, D.C. to state capitals, with line thickness representing allocated amounts (in millions USD).",
+  bullets: [
+    "Mapped flows from Washington, D.C. (source) to 50 state capitals (destinations)",
+    "Line width classified into 0–250, 250–500, 500–1,000, 1,000–1,500, and 1,500–2,500 (Millions USD)",
+    "Projection: USA Contiguous Albers Equal Area Conic (EPSG: 102003) with AK/HI insets",
+    "Built using the Distributive Flow Lines tool (hydrology-based flowline generation)"
+  ],
+  tags: ["Flow Map", "Distributive", "Education", "ArcGIS Pro", "EPSG:102003"],
+  thumb: "Distributive_Flow_Education_Dollars_2024.jpg",
+
+  fullReportHTML: `
+    <h3>Distributive Flow Map — Federal Education Dollars (2024)</h3>
+
+    <h4>Objective</h4>
+    <p>
+      Create a <strong>distributive flow map</strong> showing how <strong>federal education dollars</strong> (2024, in
+      <strong>millions USD</strong>) are allocated to U.S. states. Flows terminate at <strong>Washington, D.C.</strong>,
+      while each state’s capital serves as a destination node with an education-dollar attribute.
+    </p>
+
+    <h4>Data & Inputs</h4>
+    <ul>
+      <li><strong>Source point:</strong> Washington, D.C. (DCpoint).</li>
+      <li><strong>Destination points:</strong> 50 state capitals (StateCaps) with an <code>Edu_Dollars</code> field (2024 values).</li>
+      <li><strong>Basemap/context:</strong> states polygon layer + Alaska and Hawaii inset frames.</li>
+    </ul>
+
+    <h4>Method (How the flow lines were created)</h4>
+    <p>
+      The map was generated using the <strong>Distributive Flow Lines</strong> tool in ArcGIS Pro. The tool builds a
+      branching network where nearby paths merge as they approach the termination point, producing a cleaner,
+      “stream-network-like” distributive structure rather than 50 separate straight lines.
+    </p>
+    <ul>
+      <li><strong>Source Feature:</strong> DCpoint</li>
+      <li><strong>Destination Features:</strong> StateCaps</li>
+      <li><strong>Distributed quantity field:</strong> <code>Edu_Dollars</code></li>
+      <li>
+        <strong>Important note:</strong> Behind the scenes, the tool uses ArcGIS hydrology logic; the flow network behaves
+        like drainage to a mouth at the source node (Washington, D.C.), which is why flows visually converge there.
+      </li>
+    </ul>
+
+    <h4>Projection</h4>
+    <p>
+      <strong>USA Contiguous Albers Equal Area Conic (EPSG: 102003)</strong> was used for the contiguous U.S. to preserve
+      area relationships in thematic mapping and avoid visually biasing regions by projection distortion. Alaska and Hawaii
+      are shown as insets for readability.
+    </p>
+
+    <h4>Symbology (Line width classes)</h4>
+    <p>
+      Flow thickness represents the education dollar amount (in <strong>millions USD</strong>) using the following classes:
+    </p>
+    <ul>
+      <li>0–250</li>
+      <li>250–500</li>
+      <li>500–1,000</li>
+      <li>1,000–1,500</li>
+      <li>1,500–2,500</li>
+    </ul>
+
+    <h4>Deliverable</h4>
+    <ul>
+      <li>Final distributive flow map layout with legend, scale, projection note, and AK/HI insets.</li>
+    </ul>
+
+    <h4>Key Takeaway</h4>
+    <p>
+      The distributive flow design makes national allocation patterns easier to interpret by <strong>merging routes</strong>
+      as they approach Washington, D.C., reducing clutter compared to straight OD lines while still preserving state-level
+      differences through line-width encoding.
+    </p>
+  `
+},
+{
+  id: "sgf-radial-flow-flights",
+  title: "Nonstop Flight Routes to Springfield–Branson National Airport (SGF)",
+  subtitle: "Radial flow map · Geodesic routes · Weekly flight frequencies",
+  type: "image",
+  primary: "SGF_Radial_Flow_Weekly.jpg",
+  report: "Reports/Lab3_Part2_FlowMaps_Report.pdf",
+  folder: "https://your-onedrive-link.example",
+  summary:
+    "A radial flow map illustrating nonstop airline routes converging on Springfield–Branson National Airport (SGF), with line width representing weekly flight frequency.",
+  bullets: [
+    "Flow type: Radial (hub-and-spoke) flow map with SGF as the central destination",
+    "Line geometry: Geodesic lines representing shortest paths on the Earth’s ellipsoid",
+    "Projection: Custom Azimuthal Equidistant centered on SGF to preserve distance and direction",
+    "Symbology: Flow line width scaled by weekly flight frequency"
+  ],
+  tags: ["Radial Flow Map", "Airline Routes", "Geodesic", "ArcGIS Pro"],
+  thumb: "SGF_Radial_Flow_Weekly.jpg",
+
+  fullReportHTML: `
+    <h3>Radial Flow Mapping Objective</h3>
+    <p>
+      This map was designed to visualize <strong>nonstop airline routes</strong> converging on a single destination,
+      Springfield–Branson National Airport (SGF). Radial flow maps are ideal for hub-based transportation systems,
+      such as airline networks, because they emphasize directional connectivity and route intensity.
+    </p>
+
+    <h3>Data & Methodology</h3>
+    <ul>
+      <li>Airport locations derived from a U.S. Airports point dataset.</li>
+      <li>A custom CSV was created containing origin and destination coordinates for 14 nonstop routes to SGF.</li>
+      <li>Flowlines were generated using the <strong>XY to Line</strong> tool in ArcGIS Pro.</li>
+    </ul>
+
+    <h3>Line Type Selection</h3>
+    <p>
+      <strong>Geodesic lines</strong> were selected as the most appropriate representation for airline routes.
+      Geodesic lines model the shortest path between two points on the Earth’s ellipsoid, closely matching
+      real-world flight paths. Compared to rhumb lines or normal sections, geodesics minimize distortion
+      over long distances and remain accurate regardless of map projection.
+    </p>
+
+    <h3>Projection Choice</h3>
+    <p>
+      The map uses a <strong>custom Azimuthal Equidistant projection centered on SGF</strong>.
+      This projection preserves both distance and direction from the hub, making it ideal for radial flow maps
+      where spatial relationships relative to a central point are critical.
+    </p>
+
+    <h3>Cartographic Outcome</h3>
+    <p>
+      The resulting visualization clearly highlights SGF’s national connectivity, emphasizing both the
+      geographic reach and relative importance of each route through line thickness. This design mirrors
+      professional airline route maps while maintaining geographic accuracy.
+    </p>
+  `
+},
+{
+  id: "sgf-radial-flow-seats",
+  title: "Nonstop Flight Routes to Springfield–Branson National Airport (SGF)",
+  subtitle: "Radial flow map · Seats per flight · Great-circle airline routes",
+  type: "image",
+  primary: "SGF_Radial_Flow_Seats.jpg",
+  report: "Reports/Lab3_Part2_FlowMaps_Report.pdf",
+  folder: "https://your-onedrive-link.example",
+  summary:
+    "A radial flow map showing nonstop airline routes converging on Springfield–Branson National Airport (SGF), where flow-line thickness represents the number of seats per flight.",
+  bullets: [
+    "Flow type: Radial (hub-and-spoke) airline route map centered on SGF",
+    "Line geometry: Great-circle / geodesic paths representing realistic flight routes",
+    "Projection: Custom Azimuthal Equidistant centered on SGF",
+    "Symbology: Line width scaled by seats per flight (aircraft capacity)"
+  ],
+  tags: ["Radial Flow Map", "Air Transportation", "Seat Capacity", "ArcGIS Pro"],
+  thumb: "SGF_Radial_Flow_Seats.jpg",
+
+  fullReportHTML: `
+    <h3>Radial Flow Mapping Objective</h3>
+    <p>
+      This map visualizes <strong>nonstop airline routes</strong> to Springfield–Branson National Airport (SGF),
+      emphasizing differences in <strong>aircraft seating capacity</strong> rather than flight frequency.
+      Radial flow maps are well suited for transportation networks where multiple origins converge on a single hub.
+    </p>
+
+    <h3>Data & Preparation</h3>
+    <ul>
+      <li>Airport locations obtained from a U.S. Airports point dataset.</li>
+      <li>A custom CSV file was created listing nonstop destinations to SGF, including seat capacity per aircraft.</li>
+      <li>Flowlines were generated using the <strong>XY to Line</strong> tool in ArcGIS Pro.</li>
+    </ul>
+
+    <h3>Line Type Selection</h3>
+    <p>
+      <strong>Great-circle (geodesic) lines</strong> were used to represent airline routes.
+      These lines approximate the shortest path over the Earth’s surface, closely matching
+      real-world flight trajectories and minimizing distortion across long distances.
+    </p>
+
+    <h3>Projection Choice</h3>
+    <p>
+      The map uses a <strong>custom Azimuthal Equidistant projection</strong> centered on SGF.
+      This projection preserves both distance and direction from the hub, making it ideal
+      for radial flow maps where spatial relationships relative to a central airport are critical.
+    </p>
+
+    <h3>Interpretation</h3>
+    <p>
+      Thicker flow lines indicate routes served by larger aircraft with higher seating capacity,
+      such as flights to major hubs in Florida, Texas, and the western United States.
+      Thinner lines represent routes served by smaller regional aircraft.
+      This design highlights not just connectivity, but the <strong>relative passenger-carrying capacity</strong>
+      of SGF’s nonstop routes.
+    </p>
+
+    <h3>Cartographic Outcome</h3>
+    <p>
+      By scaling flow width to seat capacity, the map provides a clear visual comparison
+      of route importance while maintaining geographic accuracy.
+      This complements the frequency-based radial map by revealing a different dimension
+      of airline service intensity.
+    </p>
+  `
+},
+{
+  id: "florida-health-insurance-uncertainty-map1",
+  title: "Health Insurance Estimates and Uncertainty — Florida (ACS 2016–2020)",
+  subtitle: "Proportional symbols · Reliability via transparency (CV %) · Uninsured age 75+",
+  type: "map",
+  primary: "Florida_HealthInsurance_Estimates_Uncertainty_ACS2016_2020.jpg",
+  report: "Reports/Lab6_MOE_Florida_HealthInsurance.pdf",
+  folder: "https://your-onedrive-link.example",
+  summary:
+    "County-level visualization of uninsured percentage (age 75+) in Florida using proportional symbols, with transparency driven by coefficient of variation (CV) to communicate estimate reliability—more transparent symbols indicate higher uncertainty.",
+  bullets: [
+    "Variable mapped: Percent uninsured (age 75+), ACS Table S2701 (2016–2020)",
+    "Design: unclassed proportional symbols (estimate magnitude = circle size)",
+    "Uncertainty encoding: symbol transparency mapped to CV (%) for reliability",
+    "Projection: NAD 1983 HARN Florida Albers (Meters)"
+  ],
+  tags: [
+    "ACS",
+    "Health Insurance",
+    "Uncertainty",
+    "Coefficient of Variation",
+    "ArcGIS Pro",
+    "Florida"
+  ],
+  thumb: "Florida_HealthInsurance_Estimates_Uncertainty_ACS2016_2020.jpg",
+
+  fullReportHTML: `
+    <h3>What this map shows</h3>
+    <p>
+      This map displays <strong>Florida county-level health insurance estimates</strong>
+      from the <strong>American Community Survey (ACS) 2016–2020</strong>.
+      The mapped variable is the <strong>percent uninsured for the civilian noninstitutionalized population aged 75+</strong>.
+    </p>
+
+    <h3>How to read the symbology</h3>
+    <ul>
+      <li><strong>Circle size</strong> represents the estimate value (percent uninsured).</li>
+      <li>
+        <strong>Transparency</strong> represents reliability using the
+        <strong>coefficient of variation (CV %)</strong>:
+        <ul>
+          <li>More solid (less transparent) → higher reliability / lower uncertainty</li>
+          <li>More transparent → lower reliability / higher uncertainty</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Why transparency is used</h3>
+    <p>
+      ACS estimates are sample-based and include a <strong>margin of error (MOE)</strong>.
+      CV summarizes uncertainty as a percentage of the estimate:
+    </p>
+    <pre>
+CV = (MOE / (1.645 × Estimate)) × 100   (90% confidence)
+    </pre>
+    <p>
+      Encoding CV as transparency makes uncertainty visible without hiding the estimate—
+      reliable counties “stand out” while uncertain counties visually recede.
+    </p>
+
+    <h3>Key takeaways</h3>
+    <ul>
+      <li>
+        Counties with larger, more opaque symbols represent stronger (more reliable)
+        uninsured estimates for the 75+ population.
+      </li>
+      <li>
+        Counties where symbols appear faint indicate higher sampling uncertainty and should be interpreted cautiously.
+      </li>
+      <li>
+        This design helps communicate <em>both</em> the mapped value and the trustworthiness of that value in one view.
+      </li>
+    </ul>
+
+    <h3>Technical notes</h3>
+    <ul>
+      <li><strong>Data:</strong> U.S. Census Bureau ACS 2016–2020, Table S2701</li>
+      <li><strong>Geography:</strong> Florida counties</li>
+      <li><strong>Projection:</strong> NAD 1983 HARN Florida Albers (Meters)</li>
+      <li><strong>Method:</strong> Proportional symbols (unclassed) + transparency driven by CV (%)</li>
+    </ul>
+  `
+},
+{
+  id: "florida-health-insurance-moe-bounds",
+  title: "Health Insurance Estimates and Margins of Error — Florida (ACS 2016–2020)",
+  subtitle: "Estimate, lower bound, and upper bound · MOE visualization · Uninsured age 75+",
+  type: "map",
+
+  /* ✅ THUMBNAIL */
+  thumb: "Florida_HealthInsurance_MOE_Bounds_ACS2016_2020.jpg",
+
+  /* MAIN MAP IMAGE */
+  primary: "Florida_HealthInsurance_MOE_Bounds_ACS2016_2020.jpg",
+
+  report: "Reports/Lab6_MOE_Florida_HealthInsurance.pdf",
+  folder: "https://your-onedrive-link.example",
+
+  summary:
+    "County-level visualization of uninsured percentage (age 75+) in Florida that explicitly displays margins of error using overlapping proportional symbols for the estimate, lower bound, and upper bound, with transparency driven by coefficient of variation (CV).",
+
+  bullets: [
+    "Variable: Percent uninsured (civilian noninstitutionalized population, age 75+)",
+    "Green circles = ACS estimate",
+    "White rings = lower bound (Estimate − MOE)",
+    "Magenta rings = upper bound (Estimate + MOE)",
+    "Transparency scaled by coefficient of variation (CV %) to show reliability",
+    "Unclassed proportional symbols used for all three layers"
+  ],
+
+  tags: [
+    "ACS",
+    "Margins of Error",
+    "Uncertainty Mapping",
+    "Health Insurance",
+    "Coefficient of Variation",
+    "ArcGIS Pro",
+    "Florida"
+  ],
+
+  fullReportHTML: `
+    <h3>Purpose of this map</h3>
+    <p>
+      This map demonstrates how <strong>margins of error (MOE)</strong> can be
+      visualized directly alongside ACS estimates, rather than hidden in tables.
+      The mapped variable is the <strong>percentage of uninsured residents aged 75+</strong>
+      at the county level in Florida.
+    </p>
+
+    <h3>How uncertainty is shown</h3>
+    <ul>
+      <li><strong>Green circles</strong> represent the ACS estimate.</li>
+      <li><strong>White rings</strong> represent the lower bound (Estimate − MOE).</li>
+      <li><strong>Magenta rings</strong> represent the upper bound (Estimate + MOE).</li>
+      <li>
+        <strong>Transparency</strong> reflects reliability using the
+        <strong>coefficient of variation (CV %)</strong> —
+        more transparent symbols indicate higher uncertainty.
+      </li>
+    </ul>
+
+    <h3>Why unclassed proportional symbols were used</h3>
+    <p>
+      All three layers use the <strong>same symbol sizes and scale</strong>.
+      This ensures that when the estimate and bounds are close,
+      the green estimate dominates visually.
+      When margins of error are large, the white and magenta bounds
+      visually overpower the estimate.
+    </p>
+
+    <h3>Spatial patterns</h3>
+    <ul>
+      <li>
+        Urban counties generally show tight overlap between estimate and bounds,
+        indicating high reliability.
+      </li>
+      <li>
+        Rural and northern counties exhibit wide halos,
+        reflecting larger MOEs and lower reliability.
+      </li>
+      <li>
+        The map makes uncertainty immediately visible without requiring numeric lookup.
+      </li>
+    </ul>
+
+    <h3>Technical details</h3>
+    <ul>
+      <li><strong>Data source:</strong> ACS 2016–2020, Table S2701</li>
+      <li><strong>Geography:</strong> Florida counties</li>
+      <li><strong>Projection:</strong> NAD 1983 HARN Florida Albers (Meters)</li>
+      <li><strong>Reliability metric:</strong> CV = (MOE / (1.645 × Estimate)) × 100</li>
+    </ul>
+  `
+}
+
+    ];
+    // =====================================
+
+    const listEl = document.getElementById("list");
+    const qEl = document.getElementById("q");
+
+    const titleEl = document.getElementById("title");
+    const metaEl = document.getElementById("meta");
+    const viewerEl = document.getElementById("viewer");
+    const summaryEl = document.getElementById("summary");
+    const bulletsEl = document.getElementById("bullets");
+    const pillsEl = document.getElementById("pills");
+
+    const openPrimary = document.getElementById("openPrimary");
+    const openReport = document.getElementById("openReport");
+    const openFolder = document.getElementById("openFolder");
+
+    let activeId = null;
+
+    function renderList(items){
+      listEl.innerHTML = "";
+      items.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "card" + (p.id === activeId ? " active" : "");
+        card.setAttribute("role", "option");
+        card.setAttribute("aria-selected", p.id === activeId ? "true" : "false");
+        card.dataset.id = p.id;
+
+        card.innerHTML = `
+          <img class="thumb" src="${p.thumb || ""}" alt="">
+          <div>
+            <p class="t">${p.title}</p>
+            <p class="d">${p.subtitle}</p>
+          </div>
+        `;
+
+        card.addEventListener("click", () => selectProject(p.id));
+        listEl.appendChild(card);
+      });
+    }
+
+    function setViewer(p){
+      viewerEl.innerHTML = "";
+      if (p.type === "pdf") {
+        const iframe = document.createElement("iframe");
+        iframe.src = p.primary;
+        iframe.title = p.title + " (PDF)";
+        viewerEl.appendChild(iframe);
+      } else {
+        const img = document.createElement("img");
+        img.src = p.primary;
+        img.alt = p.title;
+        viewerEl.appendChild(img);
+      }
+    }
+
+    function selectProject(id){
+      const p = PROJECTS.find(x => x.id === id);
+      if (!p) return;
+
+      activeId = id;
+      renderList(filterProjects(qEl.value));
+
+      titleEl.textContent = p.title;
+      metaEl.textContent = p.subtitle;
+
+      setViewer(p);
+
+      summaryEl.textContent = p.summary || "";
+
+      // Full report (expandable)
+    const fullWrap = document.getElementById("fullReportWrap");
+    const fullReport = document.getElementById("fullReport");
+
+    if (fullWrap && fullReport) {
+    if (p.fullReportHTML) {
+        fullWrap.style.display = "block";
+        fullReport.innerHTML = p.fullReportHTML;
+        fullWrap.open = false; // keep collapsed by default
+    } else {
+        fullWrap.style.display = "none";
+        fullReport.innerHTML = "";
+    }
+    }
+
+      bulletsEl.innerHTML = "";
+      (p.bullets || []).forEach(b => {
+        const li = document.createElement("li");
+        li.textContent = b;
+        bulletsEl.appendChild(li);
+      });
+
+      pillsEl.innerHTML = "";
+      (p.tags || []).forEach(t => {
+        const span = document.createElement("span");
+        span.className = "pill";
+        span.textContent = t;
+        pillsEl.appendChild(span);
+      });
+
+      openPrimary.href = p.primary || "#";
+      openReport.href = p.report || "#";
+      openFolder.href = p.folder || "#";
+
+      // disable buttons if not provided
+      openReport.style.display = p.report ? "inline-flex" : "none";
+      openFolder.style.display = p.folder ? "inline-flex" : "none";
+
+      // update URL hash for shareable deep link
+      history.replaceState(null, "", "#" + p.id);
+    }
+
+    function filterProjects(query){
+      const q = (query || "").trim().toLowerCase();
+      if (!q) return PROJECTS;
+      return PROJECTS.filter(p =>
+        (p.title || "").toLowerCase().includes(q) ||
+        (p.subtitle || "").toLowerCase().includes(q) ||
+        (p.tags || []).join(" ").toLowerCase().includes(q)
+      );
+    }
+
+    qEl.addEventListener("input", () => renderList(filterProjects(qEl.value)));
+
+    // init
+    renderList(PROJECTS);
+
+    // deep link support: open page with #project-id
+    const initial = (location.hash || "").replace("#", "");
+    if (initial && PROJECTS.some(p => p.id === initial)) {
+      selectProject(initial);
+    } else {
+      selectProject(PROJECTS[0].id);
+    }
+    const readReportBtn = document.getElementById("readReportBtn");
+
+readReportBtn.addEventListener("click", () => {
+  const wrap = document.getElementById("fullReportWrap");
+  if (!wrap) return;
+
+  wrap.open = true; // expand <details>
+
+  // scroll the right panel so the report is visible
+  wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+if (readReportBtn) {
+  readReportBtn.style.display = p.fullReportHTML ? "inline-flex" : "none";
+}
+
+  </script>
+</body>
+</html>
