@@ -563,7 +563,135 @@
       Overall, <strong>Kriging is well-suited for regional-scale terrain interpolation and cartographic presentation</strong>.
     </p>
   `
-},
+}
+,
+{
+  id: "usa-solar-potential-infrastructure",
+  title: "U.S. Solar Potential and Existing Solar Generation (Mainland U.S.)",
+  subtitle: "Multi-layer geovisualization · PV kWh/m²/day · Graduated solar plant capacity · Transmission voltage classes",
+  type: "image",
+  primary: "USA_Solar.jpg",
+  report: "Reports/FinalProject_Report.pdf",
+  folder: "https://your-onedrive-link.example",
+  summary:
+    "A national-scale geovisualization of the contiguous United States combining untapped photovoltaic (PV) solar potential (PV kWh/m²/day), existing solar power plants symbolized by net summer capacity (MW), and electric transmission lines classified by voltage (kV).",
+  bullets: [
+    "Map type: Multi-layer thematic map (raster solar potential + graduated symbols + line network overlay)",
+    "Solar potential: PV electricity potential surface in PV kWh/m²/day (daily average energy per square meter)",
+    "Solar plants: Graduated symbols by Net Summer Capacity (MW), classified using Natural Breaks (Jenks)",
+    "Transmission lines: Unique values by voltage class (<161 kV, 220–345 kV, >500 kV)",
+    "Extent: Contiguous U.S. (Alaska and Hawaii excluded for projection consistency)",
+    "Projection: USA Contiguous Albers Equal Area Conic"
+  ],
+  tags: ["Renewable Energy", "Solar Potential", "Graduated Symbols", "Transmission Lines", "ArcGIS Pro", "Esri Living Atlas"],
+  thumb: "USA_Solar.jpg",
+
+  fullReportHTML: `
+    <h3>Project Objective</h3>
+    <p>
+      This map provides a <strong>national-scale overview</strong> of where solar resources are strongest,
+      where <strong>utility-scale solar facilities</strong> currently exist, and how these patterns relate to the
+      <strong>high-voltage transmission network</strong>. The goal is to support a broad understanding of
+      solar opportunity and infrastructure context across the contiguous United States.
+    </p>
+
+    <h3>Data & Preparation</h3>
+    <ul>
+      <li><strong>Untapped Solar Potential (PV kWh/m²/day)</strong> obtained from Esri Living Atlas (derived from NREL solar resource modeling).</li>
+      <li><strong>Solar Power Plants</strong> sourced from EIA data via Living Atlas, using <em>Net Summer Capacity (MW)</em> for solar generators.</li>
+      <li><strong>Transmission Lines</strong> sourced from U.S. EIA/Esri Living Atlas and categorized by voltage (kV).</li>
+      <li>Alaska and Hawaii were excluded to maintain a consistent projection and map readability.</li>
+    </ul>
+
+    <h3>Symbology & Design</h3>
+    <p>
+      The solar potential raster is presented as a continuous surface to communicate geographic gradients in PV resource.
+      Solar plants are symbolized with <strong>graduated symbols</strong> using <strong>Natural Breaks (Jenks)</strong>
+      to emphasize the skewed capacity distribution (many small facilities and fewer very large ones).
+      Transmission lines are displayed using <strong>voltage classes</strong> to provide infrastructure context without dominating the map.
+    </p>
+
+    <h3>Projection Choice</h3>
+    <p>
+      The map uses <strong>USA Contiguous Albers Equal Area Conic</strong>, a standard projection for national thematic mapping that preserves area,
+      supporting fair visual comparison across large regions in the lower 48.
+    </p>
+
+    <h3>Interpretation</h3>
+    <p>
+      The visualization highlights strong solar resource patterns across the western and southwestern United States and
+      shows how clusters of high-capacity facilities align with major transmission corridors.
+      Together, these layers reveal where resource potential and infrastructure co-occur and where gaps may exist.
+    </p>
+  `
+}
+,
+{
+  id: "california-solar-capacity-choropleth",
+  title: "California Solar Generation Capacity by County",
+  subtitle: "County choropleth · Spatial Join aggregation · Net Summer Capacity (MW) · Reference overlays",
+  type: "image",
+  primary: "California_Solar.jpg",
+  report: "Reports/FinalProject_Report.pdf",
+  folder: "https://your-onedrive-link.example",
+  summary:
+    "A regional-scale county choropleth map of California summarizing total solar generation capacity using plant-level Net Summer Capacity (MW) aggregated to counties via Spatial Join, with reference overlays for major cities and clipped transmission lines.",
+  bullets: [
+    "Map type: County-level choropleth (graduated colors) of total solar generation capacity (MW)",
+    "Method: Spatial Join (plants → counties) with field mapping set to SUM to create county totals (e.g., Solar_MW_Sum)",
+    "Capacity metric: Net Summer Capacity (MW) — an instantaneous maximum output rating under summer conditions (not seasonal energy)",
+    "Classification: Natural Breaks (Jenks) for meaningful grouping of uneven county totals",
+    "Overlays: Major cities for orientation; transmission lines (kV classes) as contextual infrastructure layer",
+    "Projection: NAD 1983 (2011) California (Teale) Albers (EPSG: 3310)"
+  ],
+  tags: ["California", "Choropleth", "Spatial Join", "Solar Capacity", "ArcGIS Pro", "Renewable Energy"],
+  thumb: "California_Solar.jpg",
+
+  fullReportHTML: `
+    <h3>Regional Geovisualization Objective</h3>
+    <p>
+      This map shifts from national patterns to a <strong>regional, county-scale perspective</strong> in California.
+      The objective is to show how <strong>installed solar generation capacity</strong> is distributed across counties,
+      highlighting areas where solar development is most concentrated.
+    </p>
+
+    <h3>Data & Preparation</h3>
+    <ul>
+      <li><strong>Solar power plants</strong> (point features) include a capacity attribute measured as <em>Net Summer Capacity (MW)</em>.</li>
+      <li><strong>County boundaries</strong> provide the aggregation geography for summarizing capacity.</li>
+      <li>Datasets were clipped to California for clean regional focus and faster rendering.</li>
+    </ul>
+
+    <h3>Method: Aggregating Plant Capacity to Counties</h3>
+    <p>
+      A <strong>Spatial Join</strong> was used to attach solar plants to counties using an <em>INTERSECT</em> relationship.
+      Field mapping was configured so that plant capacity values were <strong>summed</strong>, producing county totals
+      (e.g., <code>Solar_MW_Sum</code>). This transforms individual facility attributes into a county-level measure suitable for choropleth mapping.
+    </p>
+
+    <h3>Symbology & Design</h3>
+    <p>
+      Counties are symbolized using <strong>graduated colors</strong> (choropleth) with <strong>Natural Breaks (Jenks)</strong>
+      to reflect the uneven distribution of solar capacity across the state.
+      Major cities are included as reference points to support interpretation of spatial patterns.
+      Transmission lines are included as a contextual layer when needed, but the primary theme is county-level solar capacity.
+    </p>
+
+    <h3>Projection Choice</h3>
+    <p>
+      The map uses <strong>NAD 1983 (2011) California (Teale) Albers (EPSG: 3310)</strong>, a statewide equal-area projection
+      well suited for thematic comparison across California counties.
+    </p>
+
+    <h3>Interpretation</h3>
+    <p>
+      The choropleth pattern highlights counties with the highest aggregated solar capacity and reveals how solar development
+      is concentrated in specific regions rather than being evenly distributed statewide. This regional product complements
+      the national map by providing a <strong>more detailed scale of analysis</strong>.
+    </p>
+  `
+}
+      ,
 {
   id: "cartogram-white-population-us",
   title: "Density-Equalizing Cartogram of White Population — U.S. States (2010)",
@@ -1498,3 +1626,4 @@ if (readReportBtn) {
   </script>
 </body>
 </html>
+
